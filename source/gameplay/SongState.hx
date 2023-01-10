@@ -212,6 +212,10 @@ class SongState extends FlxState
 					{
 						sustainNote.animation.frameIndex = 4;
 						sustainNote.isSustainEnd = true;
+						if (downscroll)
+						{
+							sustainNote.flipY = true;
+						}
 					}
 					else
 					{

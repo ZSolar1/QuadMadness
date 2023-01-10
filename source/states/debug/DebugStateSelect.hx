@@ -1,5 +1,6 @@
 package states.debug;
 
+import states.songselect.SongSelectState;
 import options.OptionsState;
 import gameplay.SongState;
 import states.options.AudioState;
