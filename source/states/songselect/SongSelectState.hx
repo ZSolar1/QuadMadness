@@ -1,5 +1,6 @@
 package states.songselect;
 
+import openfl.system.System;
 import flixel.FlxSubState;
 import Assets.QMAssets;
 import flixel.FlxG;
@@ -23,6 +24,7 @@ class SongSelectState extends FlxState
 	override public function create()
 	{
 		super.create();
+		System.gc();
 		pickerSym = new FlxText(48, 64, FlxG.width - 128, ">");
 		pickerDiffSym = new FlxText(176, 64, FlxG.width - 128, ">");
 		songs = new FlxText(64, 64, FlxG.width - 128);

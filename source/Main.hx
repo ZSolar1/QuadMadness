@@ -43,14 +43,13 @@ class Main extends Sprite
 			});
 		}
 		#end
-
 		addChild(new FlxGame(game.width, game.height, game.initialState, game.updateFramerate, game.drawFramerate, game.skipSplash));
 		addChild(new DebugCounter.FPSMem(2, 2, 0xFFFFFF));
 	};
 
 	function onCrash(e:UncaughtErrorEvent)
 	{
-		QMDiscordRPC.shutdown();
+		// QMDiscordRPC.shutdown();
 		var curDate = Date.now().toString();
 		var callStack:Array<StackItem> = CallStack.exceptionStack(true);
 		curDate = curDate.replace(" ", "_").replace(":", "'");

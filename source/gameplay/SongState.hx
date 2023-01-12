@@ -212,14 +212,11 @@ class SongState extends FlxState
 					{
 						sustainNote.animation.frameIndex = 4;
 						sustainNote.isSustainEnd = true;
-						if (downscroll)
-						{
-							sustainNote.flipY = true;
-						}
+						sustainNote.flipY = downscroll;
 					}
 					else
 					{
-						sustainNote.scale.y *= stepCrochet / 100 * 1.1;
+						sustainNote.scale.y *= stepCrochet / 100 * 1.075;
 						sustainNote.scale.y *= scrollSpeed;
 						sustainNote.scale.y /= 3;
 					}
@@ -531,6 +528,7 @@ class SongState extends FlxState
 				var sustainRect = new FlxRect(0, STRUM_Y + note.height / 2 - note.y, note.width * 2, note.height * 2);
 				sustainRect.y /= note.scale.y;
 				sustainRect.height -= sustainRect.y;
+				sustainRect.height += 20;
 
 				note.clipRect = sustainRect;
 			}
