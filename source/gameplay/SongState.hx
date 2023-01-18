@@ -309,10 +309,16 @@ class SongState extends FlxState
 				score = 200;
 				rating = 0.75;
 			}
-			else if (QMath.isBetween(diff, 0, Conductor.hitFrame * 0.35, true))
+			else if (QMath.isBetween(diff, 0, Conductor.hitFrame * 0.45, true))
 			{
 				score = 350;
 				rating = 1;
+			}
+			else
+			{
+				score = 0;
+				rating = 1;
+				trace('Got a weird diff of: $diff, to make the game fair, gonna count that as a 350 press but with no score');
 			}
 			popUpRating(score);
 			// score = 350;
@@ -342,6 +348,8 @@ class SongState extends FlxState
 			case 100:
 				rating.animation.frameIndex = 2;
 				rating.color = FlxColor.fromInt(0xFFFDFFDB);
+			default:
+				trace('Got an unreachable score of $score');
 		}
 		var leanDirection = FlxG.random.bool(50);
 		rating.acceleration.y = 550;
