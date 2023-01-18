@@ -459,50 +459,14 @@ class SongState extends FlxState
 
 	private function onKeyPress(event:KeyboardEvent):Void
 	{
-		var pressNotes:Array<Note> = [];
-		var sortedNotesList:Array<Note> = [];
-		var notesStopped:Bool = false;
-
-		notes.forEachAlive(function(note:Note)
-		{
-			if (note.canBeHit && controlHold[note.direction] && !note.isSustain)
-			{
-				// trace("HIT!");
-				sortedNotesList.push(note);
-				// hitNote(note);
-			}
-		});
-		sortedNotesList.sort(sortHitNotes);
-
-		if (sortedNotesList.length > 0)
-		{
-			for (epicNote in sortedNotesList)
-			{
-				for (doubleNote in pressNotes)
-				{
-					if (Math.abs(doubleNote.strumTime - epicNote.strumTime) < 1)
-					{
-						doubleNote.kill();
-						notes.remove(doubleNote, true);
-						doubleNote.destroy();
-						// trace("Double Note Hit!");
-					}
-					else
-						notesStopped = false;
-
-					if (doubleNote.direction == epicNote.direction)
-						notesStopped = true;
-				}
-
-				// eee jack detection before was not super good
-				if (!notesStopped)
-				{
-					hitNote(epicNote);
-					pressNotes.push(epicNote);
-					// trace("Note Hit!");
-				}
-			}
-		}
+		var pressableNotes:Array<Note> = [];
+		for (note in notes)
+			if (note.canBeHit && !note.isSustain)
+				pressableNotes.push(note);
+		pressableNotes.sort(sortHitNotes);
+		for (pressNote in pressableNotes)
+			if (controlHold[pressNote.direction] && pressableNotes.indexOf(pressNote) == 0)
+				hitNote(pressNote);
 	}
 
 	private function checkForHit(note:Note)
