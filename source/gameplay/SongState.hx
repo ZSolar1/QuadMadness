@@ -107,7 +107,7 @@ class SongState extends FlxState
 		scrollSpeed = Preferences.scrollSpeed;
 
 		background = new FlxSprite(0, 0).loadGraphic('assets/images/menu/background.png');
-		background.color = FlxColor.fromInt(0xFF333333);
+		background.color = 0xFF333333;
 		add(background);
 
 		stats = new FlxText(15, FlxG.height, STRUM_X - 15);
@@ -174,7 +174,7 @@ class SongState extends FlxState
 	// Finally added beats and steps
 	private function beatHit()
 	{
-		if (curBeat % 8 == 0)
+		if (curBeat % 4 == 0)
 		{
 			if (songType == 'fnf')
 				resyncVocals();

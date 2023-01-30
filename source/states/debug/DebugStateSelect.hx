@@ -22,7 +22,8 @@ class DebugStateSelect extends FlxState
 		pickerSym = new FlxText(48, 64, FlxG.width - 128, ">");
 		states = new FlxText(64, 64, FlxG.width - 128);
 		stateList = [
-			DebugSkinSelect, DebugSongSelectState, DebugStrumsState, IntroState, MenuState, SongSelectState, VisualState, AudioState, SongState, OptionsState
+			DebugSkinSelect, DebugSongSelectState, DebugStrumsState, IntroState, MenuState, SongSelectState, VisualState, AudioState, SongState, OptionsState,
+			ChartEditorState
 		];
 		for (sn in stateList)
 		{

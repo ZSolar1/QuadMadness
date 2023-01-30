@@ -207,6 +207,7 @@ class MenuState extends FlxState
 				case 'no':
 					createButtons('main');
 				case 'editor':
+					FlxG.switchState(new ChartEditorState());
 				case 'internet':
 				case 'audio':
 					gotoPreferences(new AudioState());
