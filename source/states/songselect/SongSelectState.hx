@@ -1,5 +1,6 @@
 package states.songselect;
 
+import flixel.math.FlxMath;
 import flixel.group.FlxSpriteGroup;
 import flixel.FlxSprite;
 import openfl.system.System;
@@ -39,9 +40,12 @@ class SongSelectState extends FlxState
 		songNameList = QMAssets.FNFreadAllCharts();
 		songBoxes = new FlxTypedSpriteGroup<SongSelectBox>();
 		refillDiffs();
+		var i = 0;
 		for (sn in songNameList)
 		{
 			songs.text += '$sn\n';
+			songBoxes.add(new SongSelectBox(FlxG.width - 524, sn, i));
+			i++;
 		}
 		pickerSym.antialiasing = true;
 		pickerDiffSym.antialiasing = true;
@@ -51,6 +55,7 @@ class SongSelectState extends FlxState
 		add(pickerDiffSym);
 		add(songs);
 		add(diffs);
+		add(songBoxes);
 	}
 
 	private function refillDiffs()
@@ -101,6 +106,7 @@ class SongSelectState extends FlxState
 	override public function update(elapsed:Float)
 	{
 		super.update(elapsed);
+		var prevSongBoxY = songBoxes.y;
 		if (FlxG.keys.justPressed.DOWN)
 			changeSelection(1, false);
 		else if (FlxG.keys.justPressed.UP)
@@ -121,6 +127,7 @@ class SongSelectState extends FlxState
 		{
 			FlxG.switchState(new MenuState());
 		}
+		songBoxes.y = FlxMath.lerp(prevSongBoxY, -(curSelected * 152 - (152 * 2)), 0.02);
 	}
 }
 

@@ -61,7 +61,7 @@ class SongState extends FlxState
 	var downscroll:Bool;
 
 	var songPos:Float = 0.0;
-	var clampSongPos:Float = 0.0;
+	var clampSongPos:Float = 1.0;
 	var scrollSpeed:Float = 0.0;
 	var paused:Bool = false;
 
@@ -171,10 +171,11 @@ class SongState extends FlxState
 			var strum:StrumNote = new StrumNote(STRUM_X, 0);
 			strum.x += i * 128;
 			strum.y += STRUM_Y;
+			strum.alpha = 0;
 			strums.add(strum);
 		}
 		add(strums);
-		startSong();
+		startCountdown();
 	}
 
 	// Finally added beats and steps
@@ -243,38 +244,49 @@ class SongState extends FlxState
 
 	private function startCountdown()
 	{
-		// new FlxTimer().start(crochet / 1000, function(tmr:FlxTimer)
-		// {
-		// 	var counter:FlxSprite = new FlxSprite(STRUM_X - 192, STRUM_Y).loadGraphic(Paths.ImagePath('gameplay/countdown.png'), true, 192, 96, false);
-		// 	counter.antialiasing = true;
-		// 	add(counter);
-		// 	switch (tmr.loopsLeft)
-		// 	{
-		// 		case 3:
-		// 			counter.animation.frameIndex = 0;
-		// 		case 2:
-		// 			counter.animation.frameIndex = 1;
-		// 		case 1:
-		// 			counter.animation.frameIndex = 2;
-		// 	}
-		// 	var leanDirection = FlxG.random.bool(50);
-		// 	counter.acceleration.y = 550;
-		// 	counter.velocity.y -= FlxG.random.int(140, 175);
-		// 	counter.velocity.x -= FlxG.random.int(-50, 50);
-		// 	FlxTween.tween(counter, {
-		// 		alpha: 0,
-		// 		'scale.x': FlxG.random.float(0.45, 0.65),
-		// 		'scale.y': FlxG.random.float(0.45, 0.65),
-		// 		angle: leanDirection ? FlxG.random.int(15, 35) : FlxG.random.int(-15, -35)
-		// 	}, 1, {
-		// 		ease: FlxEase.quadIn,
-		// 		onComplete: function(twn)
-		// 		{
-		// 			counter.kill();
-		// 		}
-		// 	});
-		// }, 3);
-		startSong();
+		new FlxTimer().start(crochet / 1000, function(tmr:FlxTimer)
+		{
+			if (tmr.loopsLeft > 0)
+			{
+				var counter:FlxSprite = new FlxSprite(0, 0).loadGraphic(Paths.ImagePath('gameplay/countdown.png'), true, 85, 128, false);
+				counter.screenCenter(XY);
+				add(counter);
+				switch (tmr.loopsLeft)
+				{
+					case 3:
+						counter.animation.frameIndex = 0;
+					case 2:
+						counter.animation.frameIndex = 1;
+					case 1:
+						counter.animation.frameIndex = 2;
+				}
+				var leanDirection = FlxG.random.bool(50);
+				counter.acceleration.y = 550;
+				counter.velocity.y -= FlxG.random.int(140, 175);
+				counter.velocity.x -= FlxG.random.int(-50, 50);
+				FlxTween.tween(counter, {
+					alpha: 0,
+					'scale.x': FlxG.random.float(0.45, 0.65),
+					'scale.y': FlxG.random.float(0.45, 0.65),
+					angle: leanDirection ? FlxG.random.int(15, 35) : FlxG.random.int(-15, -35)
+				}, 1, {
+					ease: FlxEase.quadIn,
+					onComplete: function(twn)
+					{
+						counter.kill();
+					}
+				});
+			}
+			else
+			{
+				for (strum in strums)
+				{
+					FlxTween.tween(strum, {alpha: 1}, 0.25);
+				}
+				startSong();
+			}
+		}, 4);
+		// startSong();
 	}
 
 	private function startSong():Void
@@ -283,10 +295,12 @@ class SongState extends FlxState
 		if (songType == 'fnf')
 		{
 			voices = new FlxSound().loadEmbedded(Sound.fromFile('mods/fnf/$songName/Voices.ogg'), false);
+			var inst = Sound.fromFile('mods/fnf/$songName/Inst.ogg');
+			FlxG.sound.playMusic(inst, 1, false);
 			FlxG.sound.list.add(voices);
-			FlxG.sound.playMusic(Sound.fromFile('mods/fnf/$songName/Inst.ogg'), 1, false);
+			voices.play(true, 0.0);
 			FlxG.sound.music.onComplete = endSong;
-			voices.play(true);
+			// voices.play(true);
 		}
 		startedSong = true;
 	}

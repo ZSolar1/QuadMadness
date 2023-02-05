@@ -18,6 +18,8 @@ class IntroState extends FlxState
 	{
 		super.create();
 
+		FlxSprite.defaultAntialiasing = true;
+
 		#if desktop
 		FlxG.mouse.load(new FlxSprite().loadGraphic('assets/images/cursor.png').pixels);
 		#end
