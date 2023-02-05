@@ -4,7 +4,7 @@ import maps.MapPackager;
 #if desktop
 import sys.io.File;
 #end
-import Assets.QMAssets;
+import QMAssets.QMAssets;
 import flixel.FlxG;
 import flixel.FlxState;
 import flixel.text.FlxText;

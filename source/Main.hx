@@ -1,5 +1,7 @@
 package;
 
+import states.CrashHandlerState;
+import openfl.events.Event;
 import haxe.CallStack;
 import lime.system.System;
 import sys.io.File;
@@ -14,19 +16,60 @@ import states.IntroState;
 
 using StringTools;
 
+class QMGame extends FlxGame
+{
+	override function create(_:Event)
+	{
+		try
+		{
+			super.create(_);
+		}
+		catch (e)
+		{
+			FlxG.switchState(new CrashHandlerState(e.message));
+		}
+	}
+
+	override function draw()
+	{
+		try
+		{
+			super.draw();
+		}
+		catch (e)
+		{
+			FlxG.switchState(new CrashHandlerState(e.message));
+		}
+	}
+
+	override function update()
+	{
+		try
+		{
+			super.update();
+		}
+		catch (e)
+		{
+			trace('got a crash: ${e.message}');
+			FlxG.switchState(new CrashHandlerState(e.message));
+		}
+	}
+}
+
 class Main extends Sprite
 {
 	public function new()
 	{
 		super();
-		Lib.current.loaderInfo.uncaughtErrorEvents.addEventListener(UncaughtErrorEvent.UNCAUGHT_ERROR, onCrash);
+		// Lib.current.loaderInfo.uncaughtErrorEvents.addEventListener(UncaughtErrorEvent.UNCAUGHT_ERROR, onCrash);
 
 		var game = {
 			width: 0,
 			height: 0,
 			initialState: IntroState,
-			updateFramerate: 144,
-			drawFramerate: 144,
+			// Will that work?
+			updateFramerate: 999,
+			drawFramerate: 999,
 			skipSplash: true
 		};
 
@@ -43,7 +86,8 @@ class Main extends Sprite
 			});
 		}
 		#end
-		addChild(new FlxGame(game.width, game.height, game.initialState, game.updateFramerate, game.drawFramerate, game.skipSplash));
+		addChild(new QMGame(game.width, game.height, game.initialState, game.updateFramerate, game.drawFramerate, game.skipSplash));
+		FlxG.fixedTimestep = false;
 		addChild(new DebugCounter.FPSMem(2, 2, 0xFFFFFF));
 	};
 

@@ -1,7 +1,7 @@
 package skin;
 
 import flixel.system.FlxAssets.FlxGraphicAsset;
-import Assets.QMAssets;
+import QMAssets.QMAssets;
 import flash.display.BitmapData;
 
 class SkinLoader

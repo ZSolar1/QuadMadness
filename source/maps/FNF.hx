@@ -1,6 +1,6 @@
 package maps;
 
-import Assets.QMAssets;
+import QMAssets.QMAssets;
 import haxe.Json;
 
 using StringTools;

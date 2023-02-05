@@ -1,6 +1,6 @@
 package states.debug;
 
-import Assets.QMAssets;
+import QMAssets.QMAssets;
 import flixel.FlxG;
 import flixel.text.FlxText;
 import flixel.FlxState;

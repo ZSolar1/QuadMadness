@@ -1,5 +1,8 @@
 package states;
 
+import haxe.Json;
+import maps.MapChart;
+import gameplay.NoteParticle;
 import gameplay.Note;
 import flixel.math.FlxMath;
 import flixel.util.FlxStringUtil;
@@ -74,6 +77,7 @@ class ChartEditorState extends FlxState
 		}
 		add(strums);
 		add(beatBars);
+		add(notes);
 		loadSong();
 	}
 
@@ -86,10 +90,7 @@ class ChartEditorState extends FlxState
 		FlxG.sound.music.pause();
 		crochet = (60 / bpm) * 1000;
 		stepCrochet = crochet / 4;
-		for (i in 0...5)
-		{
-			beatBars.add(new BeatBar(crochet * i));
-		}
+		generateBars();
 	}
 
 	function resumePause()
@@ -106,8 +107,16 @@ class ChartEditorState extends FlxState
 
 	private function beatHit()
 	{
-		beatBars.add(new BeatBar(songPos + crochet * 4));
-		trace('beat hit');
+		// beatBars.add(new BeatBar(songPos + crochet * 4));
+	}
+
+	private function generateBars()
+	{
+		var beatAmount = Math.ceil(songLength / crochet);
+		for (i in 0...beatAmount)
+		{
+			beatBars.add(new BeatBar(i * crochet));
+		}
 	}
 
 	private function stepHit()
@@ -116,19 +125,70 @@ class ChartEditorState extends FlxState
 			beatHit();
 	}
 
+	function addNote(direction:Int)
+	{
+		var note = new Note(songPos, direction, 0.0);
+		note.x = STRUM_X + (128 * direction);
+		notes.add(note);
+		createParticle(direction);
+	}
+
+	private function createParticle(direction:Int)
+	{
+		var particle:NoteParticle = new NoteParticle(STRUM_X + (128 * direction), STRUM_Y);
+		add(particle);
+	}
+
+	private function saveMap()
+	{
+		var chart:MapChart = new MapChart(notes.members, [0]);
+		var chartJson:String = cast Json.stringify(chart);
+		QMAssets.writeChart(songName, songDiff, chartJson);
+	}
+
 	override function update(elapsed:Float)
 	{
 		super.update(elapsed);
 		var prevStep = curStep;
-		if (FlxG.sound.music.playing)
-		{
-			songPos = FlxG.sound.music.time;
-			songPosText.text = '${songPos / 1000} / ${songLength / 1000}';
-		}
+		songPos = FlxG.sound.music.time;
+		songPosText.text = '${songPos / 1000} / ${songLength / 1000}';
 		if (FlxG.keys.justPressed.ESCAPE)
 			FlxG.switchState(new MenuState());
 		if (FlxG.keys.justPressed.SPACE)
 			resumePause();
+		if (FlxG.keys.pressed.UP && songPos > 0)
+		{
+			FlxG.sound.music.time -= FlxG.keys.pressed.SHIFT ? 10 : 1;
+		}
+		if (FlxG.keys.pressed.DOWN && songPos < songLength)
+		{
+			FlxG.sound.music.time += FlxG.keys.pressed.SHIFT ? 10 : 1;
+		}
+		if (FlxG.keys.justPressed.H)
+		{
+			addNote(0);
+			// trace('Placed note at $songPos with direction of 0');
+		}
+		if (FlxG.keys.justPressed.J)
+		{
+			addNote(1);
+			// trace('Placed note at $songPos with direction of 1');
+		}
+		if (FlxG.keys.justPressed.K)
+		{
+			addNote(2);
+			// trace('Placed note at $songPos with direction of 2');
+		}
+		if (FlxG.keys.justPressed.L)
+		{
+			addNote(3);
+			// trace('Placed note at $songPos with direction of 3');
+		}
+		if (FlxG.keys.justPressed.S && FlxG.keys.pressed.CONTROL)
+		{
+			saveMap();
+		}
+		// FlxG.sound.music.time += FlxG.mouse.wheel;
 
 		steps = songPos / stepCrochet;
 		beats = songPos / crochet;
@@ -145,12 +205,12 @@ class ChartEditorState extends FlxState
 			// bar.y = (STRUM_Y - (songPos - (crochet * 4)) * (0.45 * FlxMath.roundDecimal(Preferences.scrollSpeed, 2)) - Preferences.visualOffset);
 			var calc = (STRUM_Y - (songPos - bar.time) * (0.45 * FlxMath.roundDecimal(Preferences.scrollSpeed, 2)) - Preferences.visualOffset);
 			bar.y = (calc);
-			if (bar.time - songPos < -1500)
-			{
-				beatBars.remove(bar, true);
-				bar.destroy();
-			}
 		});
+		for (note in notes)
+		{
+			// bar.y = (STRUM_Y - (songPos - (crochet * 4)) * (0.45 * FlxMath.roundDecimal(Preferences.scrollSpeed, 2)) - Preferences.visualOffset);
+			note.y = (STRUM_Y - (songPos - note.strumTime) * (0.45 * FlxMath.roundDecimal(Preferences.scrollSpeed, 2)) - Preferences.visualOffset);
+		}
 	}
 }
 

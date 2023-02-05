@@ -1,9 +1,10 @@
 package gameplay;
 
+import flixel.system.ui.FlxSoundTray;
 import hscript.Interp;
 import flixel.FlxCamera;
 import flixel.util.FlxTimer;
-import Assets.QMAssets;
+import QMAssets.QMAssets;
 import SongSaveData.Scores;
 import flash.media.Sound;
 import flixel.FlxG;
@@ -112,6 +113,7 @@ class SongState extends FlxState
 
 		stats = new FlxText(15, FlxG.height, STRUM_X - 15);
 		stats.setFormat(Fonts.NotoSans.Light, 28);
+		stats.antialiasing = true;
 		updateScore();
 
 		if (Globals.debugMode)
@@ -125,8 +127,12 @@ class SongState extends FlxState
 		healthBar.numDivisions = 512;
 		healthBar.createFilledBar(FlxColor.fromInt(0xFF333333), FlxColor.WHITE);
 
+		positionBar.antialiasing = true;
+		healthBar.antialiasing = true;
+
 		healthText = new FlxText(STRUM_X + 512 + 12, FlxG.height, STRUM_X - 15);
 		healthText.setFormat(Fonts.NotoSans.Light, 28);
+		healthText.antialiasing = true;
 		updateHealthText();
 
 		if (Globals.debugMode)
@@ -424,6 +430,8 @@ class SongState extends FlxState
 			totalHit += 1;
 			score += judge[0];
 			combo += 1;
+			// Sound.loadFromFile('assets/sounds/hitsound.ogg')
+			new FlxSound().loadEmbedded(Sound.fromFile('assets/sounds/hitsound.ogg'), false).play(true);
 		}
 		hitRating += judge[1];
 		changeHealth(0.0125);
@@ -446,11 +454,9 @@ class SongState extends FlxState
 			maxCombo = combo;
 		combo = 0;
 		updateScore();
+		new FlxSound().loadEmbedded(Sound.fromFile('assets/sounds/miss.ogg'), false).play(true);
 	}
 
-	// Psych Engine, bruh
-	// Thanks btw
-	// Your input system is good af
 	private function sortHitNotes(a:Note, b:Note)
 	{
 		return FlxSort.byValues(FlxSort.ASCENDING, a.strumTime, b.strumTime);

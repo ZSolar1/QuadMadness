@@ -1,13 +1,14 @@
 package states.songselect;
 
+import flixel.group.FlxSpriteGroup;
+import flixel.FlxSprite;
 import openfl.system.System;
 import flixel.FlxSubState;
-import Assets.QMAssets;
+import QMAssets.QMAssets;
 import flixel.FlxG;
 import flixel.FlxState;
 import flixel.text.FlxText;
 import gameplay.SongState;
-import maps.FNF;
 
 class SongSelectState extends FlxState
 {
@@ -17,6 +18,7 @@ class SongSelectState extends FlxState
 	var pickerDiffSym:FlxText;
 	var songNameList:Array<String>;
 	var songDiffList:Array<String>;
+	var songBoxes:FlxTypedSpriteGroup<SongSelectBox>;
 	var curSelected:Int = 0;
 	var curDiffSelected:Int = 0;
 	var selectingSong:Bool = true;
@@ -24,17 +26,27 @@ class SongSelectState extends FlxState
 	override public function create()
 	{
 		super.create();
+
+		var background = new FlxSprite(0, 0).loadGraphic('assets/images/menu/background.png');
+		background.color = 0xFF333333;
+		add(background);
+
 		System.gc();
 		pickerSym = new FlxText(48, 64, FlxG.width - 128, ">");
 		pickerDiffSym = new FlxText(176, 64, FlxG.width - 128, ">");
 		songs = new FlxText(64, 64, FlxG.width - 128);
 		diffs = new FlxText(192, 64, FlxG.width - 128);
 		songNameList = QMAssets.FNFreadAllCharts();
+		songBoxes = new FlxTypedSpriteGroup<SongSelectBox>();
 		refillDiffs();
 		for (sn in songNameList)
 		{
 			songs.text += '$sn\n';
 		}
+		pickerSym.antialiasing = true;
+		pickerDiffSym.antialiasing = true;
+		songs.antialiasing = true;
+		diffs.antialiasing = true;
 		add(pickerSym);
 		add(pickerDiffSym);
 		add(songs);

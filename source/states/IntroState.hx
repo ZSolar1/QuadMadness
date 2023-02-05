@@ -27,6 +27,10 @@ class IntroState extends FlxState
 		subtitle = new FlxText(0, FlxG.height / 2 + 10, FlxG.width, "A free 4k VSRG game, in development", 20);
 		pressanykey = new FlxText(0, FlxG.height - 96, FlxG.width, "Press ENTER / Click to continue", 20);
 
+		title.antialiasing = true;
+		subtitle.antialiasing = true;
+		pressanykey.antialiasing = true;
+
 		title.alpha = 0;
 		subtitle.alpha = 0;
 		pressanykey.alpha = 0;
