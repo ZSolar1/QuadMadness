@@ -71,6 +71,8 @@ class SongState extends FlxState
 	var stepCrochet:Float = 0.0;
 	var voices:FlxSound;
 
+	var music:openfl.media.Sound;
+
 	var curBeat:Int;
 	var curStep:Int;
 
@@ -175,6 +177,11 @@ class SongState extends FlxState
 			strums.add(strum);
 		}
 		add(strums);
+		if (songType == 'fnf')
+		{
+			music = Sound.fromFile('mods/fnf/$songName/Inst.ogg');
+			voices = new FlxSound().loadEmbedded(Sound.fromFile('mods/fnf/$songName/Voices.ogg'), false);
+		}
 		startCountdown();
 	}
 
@@ -281,7 +288,7 @@ class SongState extends FlxState
 			{
 				for (strum in strums)
 				{
-					FlxTween.tween(strum, {alpha: 1}, 0.25);
+					FlxTween.tween(strum, {alpha: 1}, 1);
 				}
 				startSong();
 			}
@@ -294,9 +301,7 @@ class SongState extends FlxState
 		generateNotes();
 		if (songType == 'fnf')
 		{
-			voices = new FlxSound().loadEmbedded(Sound.fromFile('mods/fnf/$songName/Voices.ogg'), false);
-			var inst = Sound.fromFile('mods/fnf/$songName/Inst.ogg');
-			FlxG.sound.playMusic(inst, 1, false);
+			FlxG.sound.playMusic(music, 1, false);
 			FlxG.sound.list.add(voices);
 			voices.play(true, 0.0);
 			FlxG.sound.music.onComplete = endSong;
@@ -487,13 +492,15 @@ class SongState extends FlxState
 
 	private function onKeyPress(event:KeyboardEvent):Void
 	{
+		if (!startedSong)
+			return;
 		var pressableNotes:Array<Note> = [];
 		for (note in notes)
 			if (note.canBeHit && !note.isSustain)
 				pressableNotes.push(note);
 		pressableNotes.sort(sortHitNotes);
 		for (pressNote in pressableNotes)
-			if (controlHold[pressNote.direction] && pressableNotes.indexOf(pressNote) == 0)
+			if (controlHold[pressNote.direction] && pressableNotes[0] == pressNote)
 				hitNote(pressNote);
 	}
 
@@ -575,13 +582,14 @@ class SongState extends FlxState
 		if (Controls.pressed('right'))
 			strums.members[3].playAnim('pressed');
 
-		if (Controls.justPressed('pause'))
-		{
-			FlxG.sound.music.pause();
-			voices.pause();
-			var pss = new PauseSubState(0, 0, [songName, songDiff, misses, accuracy]);
-			openSubState(pss);
-		}
+		if (startedSong)
+			if (Controls.justPressed('pause'))
+			{
+				FlxG.sound.music.pause();
+				voices.pause();
+				var pss = new PauseSubState(0, 0, [songName, songDiff, misses, accuracy]);
+				openSubState(pss);
+			}
 
 		if (Controls.justReleased('left'))
 			strums.members[0].playAnim('idle');

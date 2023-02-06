@@ -56,6 +56,7 @@ class MenuState extends FlxState
 		fade();
 		FlxTween.color(background, 0.55, FlxColor.WHITE, FlxColor.BLACK, {ease: FlxEase.expoInOut});
 		FlxTween.color(logo, 0.5, FlxColor.WHITE, FlxColor.BLACK, {ease: FlxEase.expoInOut});
+		FlxTween.tween(logo, {alpha: 0}, 0.5, {ease: FlxEase.quadOut});
 		new FlxTimer().start(0.75, function(tmr)
 		{
 			System.exit(0);

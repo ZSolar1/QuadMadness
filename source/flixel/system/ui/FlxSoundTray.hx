@@ -39,7 +39,7 @@ class FlxSoundTray extends Sprite
 	 */
 	var _width:Int = 80;
 
-	var _defaultScale:Float = 1.5;
+	var _defaultScale:Float = 2.0;
 
 	/**The sound used when increasing the volume.**/
 	public var volumeUpSound:String = "flixel/sounds/beep";
@@ -102,7 +102,6 @@ class FlxSoundTray extends Sprite
 		bx += 6;
 		by--;
 
-		y = -height;
 		visible = false;
 		alpha = 0;
 	}
@@ -144,7 +143,6 @@ class FlxSoundTray extends Sprite
 
 		_timer = 2;
 		FlxTween.tween(this, {alpha: 1}, 0.25);
-		y = 0;
 		visible = true;
 		active = true;
 	}

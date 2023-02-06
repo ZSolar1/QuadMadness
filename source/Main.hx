@@ -23,10 +23,11 @@ class QMGame extends FlxGame
 		try
 		{
 			super.create(_);
+			FlxG.fixedTimestep = false;
 		}
 		catch (e)
 		{
-			FlxG.switchState(new CrashHandlerState(e.message));
+			FlxG.switchState(new CrashHandlerState(e.message, e.stack));
 		}
 	}
 
@@ -38,7 +39,7 @@ class QMGame extends FlxGame
 		}
 		catch (e)
 		{
-			FlxG.switchState(new CrashHandlerState(e.message));
+			FlxG.switchState(new CrashHandlerState(e.message, e.stack));
 		}
 	}
 
@@ -51,7 +52,7 @@ class QMGame extends FlxGame
 		catch (e)
 		{
 			trace('got a crash: ${e.message}');
-			FlxG.switchState(new CrashHandlerState(e.message));
+			FlxG.switchState(new CrashHandlerState(e.message, e.stack));
 		}
 	}
 }
@@ -87,7 +88,6 @@ class Main extends Sprite
 		}
 		#end
 		addChild(new QMGame(game.width, game.height, game.initialState, game.updateFramerate, game.drawFramerate, game.skipSplash));
-		FlxG.fixedTimestep = false;
 		addChild(new DebugCounter.FPSMem(2, 2, 0xFFFFFF));
 	};
 
