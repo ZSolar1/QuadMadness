@@ -491,18 +491,10 @@ class SongState extends FlxState
 	}
 
 	private function onKeyPress(event:KeyboardEvent):Void
-	{
-		if (!startedSong)
-			return;
-		var pressableNotes:Array<Note> = [];
-		for (note in notes)
-			if (note.canBeHit && !note.isSustain)
-				pressableNotes.push(note);
-		pressableNotes.sort(sortHitNotes);
-		for (pressNote in pressableNotes)
-			if (controlHold[pressNote.direction] && pressableNotes[0] == pressNote)
-				hitNote(pressNote);
-	}
+		if (startedSong)
+			for (note in notes)
+				if (note.canBeHit && !note.isSustain && controlHold[note.direction])
+					hitNote(note);
 
 	private function checkForHit(note:Note)
 	{
