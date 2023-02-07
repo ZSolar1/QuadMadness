@@ -76,6 +76,7 @@ class Main extends Sprite
 
 		Preferences.loadPrefs();
 		Globals.version = Lib.application.meta.get('version');
+		FlxG.sound.volume = Preferences.masterVolume;
 
 		#if desktop
 		if (!QMDiscordRPC.isInitialized)
@@ -88,7 +89,7 @@ class Main extends Sprite
 		}
 		#end
 		addChild(new QMGame(game.width, game.height, game.initialState, game.updateFramerate, game.drawFramerate, game.skipSplash));
-		addChild(new DebugCounter.FPSMem(2, 2, 0xFFFFFF));
+		addChild(new FPSMem(2, 2, 0xFFFFFF));
 	};
 
 	function onCrash(e:UncaughtErrorEvent)
