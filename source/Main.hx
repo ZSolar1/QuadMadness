@@ -76,7 +76,6 @@ class Main extends Sprite
 
 		Preferences.loadPrefs();
 		Globals.version = Lib.application.meta.get('version');
-		FlxG.sound.volume = Preferences.masterVolume;
 
 		#if desktop
 		if (!QMDiscordRPC.isInitialized)

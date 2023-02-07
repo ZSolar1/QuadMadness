@@ -534,7 +534,7 @@ class SongState extends FlxState
 	private function endSong()
 	{
 		positionBar.parentVariable = '';
-		positionBar.percent = 1;
+		positionBar.value = 1;
 		new FlxTimer().start(1, function(tmr)
 		{
 			FlxG.switchState(new MenuState());
