@@ -44,10 +44,10 @@ class SongState extends FlxState
 	var chart:MapChart;
 
 	// All song types:
-	// native -  - TODO
-	// mania - Uhhh well
-	// quaver - TODO
-	// fnf - Almost done
+	// native:  Idk
+	// mania:   Almost
+	// etterna: TODO
+	// fnf:     Almost
 	var strums:FlxTypedGroup<StrumNote>;
 	var particles:FlxTypedGroup<NoteParticle>;
 	var allNotes:Array<Note>;
