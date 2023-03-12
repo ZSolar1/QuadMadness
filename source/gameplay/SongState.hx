@@ -476,11 +476,6 @@ class SongState extends FlxState
 		new FlxSound().loadEmbedded(Sound.fromFile('assets/sounds/miss.ogg'), false).play(true);
 	}
 
-	private function sortHitNotes(a:Note, b:Note)
-	{
-		return FlxSort.byValues(FlxSort.ASCENDING, a.strumTime, b.strumTime);
-	}
-
 	private function updateScore()
 	{
 		accuracy = hitRating != 0 || totalNotes != 0 ? FlxMath.roundDecimal((hitRating / totalNotes) * 100, 2) : 0;
@@ -512,23 +507,45 @@ class SongState extends FlxState
 		if (note.strumTime < songPos && note.canBeHit)
 			note.late = true;
 
-		var center:Float = STRUM_Y * 2 + note.height / 2;
+		var center:Float = STRUM_Y + 128 / 2;
 		if (controlHold[note.direction] && note.isSustain && note.canBeHit)
 		{
+			// (40     - 0             * 3            + 128         >= 72)
 			if (note.y - note.offset.y * note.scale.y + note.height >= center)
 			{
+				if (note.y < STRUM_Y + 64)
+					note.y = STRUM_Y + 64;
 				var sustainRect = new FlxRect(0, STRUM_Y + note.height / 2 - note.y, note.width * 2, note.height * 2);
 				sustainRect.y /= note.scale.y;
 				sustainRect.height -= sustainRect.y;
 				sustainRect.height += 20;
-
 				note.clipRect = sustainRect;
 			}
-			else
-			{
+			if (note.strumTime - songPos < 0)
 				hitNote(note);
-			}
 		}
+		// if (controlHold[note.direction] && note.isSustain && note.canBeHit)
+		// {
+		// 	// if (note.y < STRUM_Y + 128)
+		// 	// {
+		// 	// 	var sustainRect:FlxRect = new FlxRect(0, 0, note.width * 2, note.height * 2);
+		// 	// 	sustainRect.y /= note.scale.y;
+		// 	// 	sustainRect.height -= sustainRect.y;
+		// 	// 	sustainRect.height += 20;
+		// 	// 	note.clipRect = sustainRect;
+		// 	// 	trace(note.clipRect.height);
+		// 	// }
+		// 	if (note.y < STRUM_Y + note.height && note.y > STRUM_Y + note.height / 2)
+		// 	{
+		// 		var sustainRect = new FlxRect(0, STRUM_Y + note.height / 2 - note.y, note.width * 2, note.height * 2);
+		// 		sustainRect.y /= note.scale.y;
+		// 		sustainRect.height -= sustainRect.y;
+		// 		sustainRect.height += 20;
+		// 		note.clipRect = sustainRect;
+		// 	}
+		// 	if (note.strumTime - songPos < 0)
+		// 		hitNote(note);
+		// }
 	}
 
 	private function endSong()
@@ -543,20 +560,13 @@ class SongState extends FlxState
 
 	private function inputHandle()
 	{
-		controlPressed[0] = Controls.justPressed('left');
-		controlPressed[1] = Controls.justPressed('down');
-		controlPressed[2] = Controls.justPressed('up');
-		controlPressed[3] = Controls.justPressed('right');
-
-		controlHold[0] = Controls.pressed('left');
-		controlHold[1] = Controls.pressed('down');
-		controlHold[2] = Controls.pressed('up');
-		controlHold[3] = Controls.pressed('right');
-
-		controlRelease[0] = Controls.justReleased('left');
-		controlRelease[1] = Controls.justReleased('down');
-		controlRelease[2] = Controls.justReleased('up');
-		controlRelease[3] = Controls.justReleased('right');
+		var directions = ['left', 'down', 'up', 'right'];
+		for (i in 0...4)
+		{
+			controlPressed[i] = Controls.justPressed(directions[i]);
+			controlHold[i] = Controls.pressed(directions[i]);
+			controlRelease[i] = Controls.justReleased(directions[i]);
+		}
 
 		if (controlPressed.contains(true))
 		{
@@ -607,16 +617,16 @@ class SongState extends FlxState
 			clampSongPos = songPos / FlxG.sound.music.length;
 			if (clampSongPos >= 1)
 				clampSongPos = 1;
-			notes.forEachAlive(function(note:Note)
+			for (note in notes)
 			{
-				checkForHit(note);
 				if (!downscroll)
 					note.y = (STRUM_Y - (songPos - note.strumTime) * (0.45 * FlxMath.roundDecimal(scrollSpeed, 2)) - Preferences.visualOffset);
 				else
 					note.y = (STRUM_Y + (songPos - note.strumTime) * (0.45 * FlxMath.roundDecimal(scrollSpeed, 2)) + Preferences.visualOffset);
+				checkForHit(note);
 				// if (note.y < STRUM_Y)
 				// 	note.kill();
-			});
+			};
 
 			steps = songPos / stepCrochet;
 			beats = songPos / crochet;

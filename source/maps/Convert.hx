@@ -1,5 +1,6 @@
 package maps;
 
+import maps.OsuParser.OsuBeatMap;
 import gameplay.Note;
 import maps.FNF.SwagSong;
 
@@ -31,5 +32,12 @@ class Convert
 		}
 		trace("Total Notes: " + notes.length);
 		return new MapChart(notes, bpms);
+	}
+
+	public static function OsuMania(song:OsuBeatMap):MapChart
+	{
+		var notes:Array<Note> = new Array<Note>();
+		for (hitobject in song.HitObjects) {}
+		return new MapChart(notes, []);
 	}
 }

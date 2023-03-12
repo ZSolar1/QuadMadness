@@ -8,10 +8,13 @@ class Note extends FlxSprite
 	public var strumTime:Float;
 	public var direction:Int;
 	public var sustainLength:Float;
-	public var isSustain:Bool;
-	public var isSustainEnd:Bool = false;
 	public var late:Bool = false;
 	public var canBeHit:Bool = false;
+
+	// Sustain related
+	public var isSustain:Bool;
+	public var isSustainEnd:Bool = false;
+	public var originalSustainHeight:Float = 0.0;
 
 	public function new(strumTime:Float, direction:Int, sustainLength:Float, isSustain:Bool = false)
 	{

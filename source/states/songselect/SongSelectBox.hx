@@ -1,5 +1,6 @@
 package states.songselect;
 
+import flixel.math.FlxMath;
 import flixel.util.FlxStringUtil;
 import flixel.group.FlxSpriteGroup;
 import flixel.FlxSprite;
@@ -20,6 +21,8 @@ class SongSelectBox extends FlxSpriteGroup
 	var text:FlxText;
 	var box:FlxSprite;
 
+	public var listed:Bool = true;
+
 	public function new(x:Int, songName:String, id:Int)
 	{
 		super(0, 0);
@@ -38,10 +41,16 @@ class SongSelectBox extends FlxSpriteGroup
 		add(text);
 	}
 
+	public function mirrorBox()
+	{
+		box.flipX = !box.flipX;
+	}
+
 	override function draw()
 	{
 		super.draw();
-		x = baseX + Math.abs(y / FlxG.height * 2 - 1) * 128;
+		if (listed)
+			x = FlxMath.lerp(x, baseX + Math.abs(y / FlxG.height * 2 - 1) * 128, 0.02);
 		text.x = x + 60;
 		text.y = y + 45;
 	}

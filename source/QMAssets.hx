@@ -1,5 +1,6 @@
 package;
 
+import openfl.utils.ByteArray;
 using StringTools;
 
 class QMAssets
@@ -14,6 +15,9 @@ class QMAssets
 		return 'mods/' + game + '/' + song;
 	}
 
+	/**
+		Read a file from 'assets/'
+	**/
 	public static function read(path:String, type:String)
 	{
 		#if sys
@@ -24,6 +28,21 @@ class QMAssets
 		#end
 	}
 
+	/**
+		Retrieve filenames relative to 'mods/'
+	**/
+	public static function readModDirectory(path:String)
+	{
+		#if sys
+		return sys.FileSystem.readDirectory('mods/$path');
+		#else
+		trace('File reading cancelled, client is not on sys-compatible platform.');
+		#end
+	}
+
+	/**
+		Retrieve all filenames inside an fnf song folder
+	**/
 	public static function FNFreadAllDiffs(song:String):Array<String>
 	{
 		#if sys
@@ -50,6 +69,9 @@ class QMAssets
 		#end
 	}
 
+	/**
+		Does file exist (relative to exe?)
+	**/
 	public static function exists(file):Bool
 	{
 		#if sys
@@ -60,6 +82,9 @@ class QMAssets
 		#end
 	}
 
+	/**
+		Retrieve all folder names inside fnf songs folder
+	**/
 	public static function FNFreadAllCharts():Array<String>
 	{
 		#if sys
@@ -70,6 +95,9 @@ class QMAssets
 		#end
 	}
 
+	/**
+		Retrieve all filenames of '*.qmp' (QM Package) inside 'mods/charts/'
+	**/
 	public static function readPackagedCharts():Array<String>
 	{
 		#if sys
@@ -80,8 +108,36 @@ class QMAssets
 		#end
 	}
 
+	/**
+		Retrieve all filenames inside 'mods/charts/'
+	**/
+	public static function readNativeCharts():Array<String>
+	{
+		#if sys
+		return sys.FileSystem.readDirectory('mods/charts/');
+		#else
+		trace('File reading cancelled, client is not on sys-compatible platform.');
+		return null;
+		#end
+	}
+
+	/**
+		Read packaged chart into a MapChart
+	**/
 	public static function readChartPackage() {}
 
+	/**
+		Write packaged chart into a file
+	**/
+	public static function writeChartPackage(name:String, data:ByteArray)
+	{
+		sys.io.File.saveContent('mods/charts/$name.qmp', data.toString());
+		trace('Writing a packaged chart to \'mods/charts/$name.qmp\'');
+	}
+
+	/**
+		Read a chart from 'mods' folder
+	**/
 	public static function readModChart(game:String, song:String)
 	{
 		#if sys
@@ -93,6 +149,9 @@ class QMAssets
 		#end
 	}
 
+	/**
+		Write a file to 'assets/'
+	**/
 	public static function write(path:String, type:String, content:String)
 	{
 		#if sys
@@ -104,6 +163,9 @@ class QMAssets
 		#end
 	}
 
+	/**
+		Write a file to 'mods/charts/'
+	**/
 	public static function writeChart(name:String, diff:String, content:String)
 	{
 		#if sys
@@ -115,6 +177,23 @@ class QMAssets
 		#end
 	}
 
+	/**
+		Create directory
+	**/
+	public static function makeDirectory(path:String)
+	{
+		#if sys
+		sys.FileSystem.createDirectory(path);
+		trace('Creating a directory "$path"');
+		#else
+		trace('File writing cancelled, client is not on sys-compatible platform.');
+		return null;
+		#end
+	}
+
+	/**
+		Write to a path (relative to exe?)
+	**/
 	public static function writeRaw(path:String, content:String)
 	{
 		#if sys
@@ -126,6 +205,9 @@ class QMAssets
 		#end
 	}
 
+	/**
+		Retrieve all filenames inside 'mods/skins/'
+	**/
 	public static function readAllSkins():Array<String>
 	{
 		#if sys
