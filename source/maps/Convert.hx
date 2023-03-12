@@ -32,7 +32,7 @@ class Convert
 			}
 		}
 		trace("Total Notes: " + notes.length);
-		return new MapChart(notes, bpms);
+		return new MapChart(notes, bpms, []);
 	}
 
 	public static function OsuMania(song:OsuBeatMap):MapChart
@@ -49,6 +49,6 @@ class Convert
 		{
 			bpms.push(1 / Std.parseFloat(timingpoint[1]) * 1000 * 60);
 		}
-		return new MapChart(notes, bpms);
+		return new MapChart(notes, bpms, [song.General.get('AudioFilename')]);
 	}
 }

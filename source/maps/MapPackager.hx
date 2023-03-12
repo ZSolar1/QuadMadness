@@ -1,7 +1,5 @@
 package maps;
 
-import haxe.io.Bytes;
-import cpp.Int32;
 import openfl.utils.ByteArray;
 
 class MapPackager
@@ -16,6 +14,7 @@ class MapPackager
 		else
 			files = [];
 		trace(files.toString());
+		#if !neko
 		songPackage.writeBytes([0x00, 0x51, 0x4D, 0x50, 0x43, 0x00]); // '.QMPC.' header
 		for (filename in files)
 		{
@@ -28,6 +27,7 @@ class MapPackager
 			songPackage.writeUTFBytes(data);
 			songPackage.writeBytes([0x03, 0x50, 0x46, 0x4E, 0x00]); // File end mark '.PFN.'
 		}
+		#end
 		QMAssets.writeChartPackage(song, songPackage);
 	}
 

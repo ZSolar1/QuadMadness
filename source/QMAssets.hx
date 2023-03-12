@@ -160,8 +160,13 @@ class QMAssets
 	**/
 	public static function writeChartPackage(name:String, data:ByteArray)
 	{
+		#if sys
 		sys.io.File.saveContent('mods/charts/$name.qmp', data.toString());
 		trace('Writing a packaged chart to \'mods/charts/$name.qmp\'');
+		#else
+		trace('File writing cancelled, client is not on sys-compatible platform.');
+		return null;
+		#end
 	}
 
 	/**

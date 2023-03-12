@@ -1,8 +1,6 @@
 package maps;
 
 // https://osu.ppy.sh/wiki/en/Client/File_formats/Osu_%28file_format%29
-import sys.io.File;
-
 using StringTools;
 
 typedef OsuBeatMap =

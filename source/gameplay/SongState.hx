@@ -190,8 +190,8 @@ class SongState extends FlxState
 		}
 		else if (songType == 'mania')
 		{
-			trace('mods/mania/$songName/audio.mp3');
-			music = Sound.fromFile('mods/mania/$songName/audio.mp3');
+			trace('mods/mania/$songName/${chart.additionalData[0]}');
+			music = Sound.fromFile('mods/mania/$songName/${chart.additionalData[0]}');
 		}
 		startCountdown();
 		trace('Started Countdown');

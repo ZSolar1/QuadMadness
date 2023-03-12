@@ -141,7 +141,7 @@ class ChartEditorState extends FlxState
 
 	private function saveMap()
 	{
-		var chart:MapChart = new MapChart(notes.members, [0]);
+		var chart:MapChart = new MapChart(notes.members, [0], []);
 		var chartJson:String = cast Json.stringify(chart);
 		QMAssets.writeChart(songName, songDiff, chartJson);
 	}

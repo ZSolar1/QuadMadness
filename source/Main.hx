@@ -4,8 +4,10 @@ import states.CrashHandlerState;
 import openfl.events.Event;
 import haxe.CallStack;
 import lime.system.System;
+#if sys
 import sys.io.File;
 import sys.FileSystem;
+#end
 import openfl.events.UncaughtErrorEvent;
 import flixel.FlxG;
 import openfl.Lib;
@@ -98,8 +100,10 @@ class Main extends Sprite
 		var callStack:Array<StackItem> = CallStack.exceptionStack(true);
 		curDate = curDate.replace(" ", "_").replace(":", "'");
 
+		#if sys
 		if (!FileSystem.exists('./crash/'))
 			FileSystem.createDirectory('./crash/');
+		#end
 
 		var errMsg:String = "Uncaught Error:\n";
 		errMsg += "Call Stack that lead to this event:\n";
@@ -119,7 +123,9 @@ class Main extends Sprite
 
 		// Crash message itself
 		Lib.application.window.alert(errMsg, "Uncaught Error!");
+		#if sys
 		File.saveContent('./crash/QM_$curDate.txt', errMsg);
+		#end
 		System.exit(1);
 	}
 }
