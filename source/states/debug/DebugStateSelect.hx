@@ -1,5 +1,6 @@
 package states.debug;
 
+import states.songselect.OsuSongSelectState;
 import states.songselect.SongSelectState;
 import options.OptionsState;
 import gameplay.SongState;
@@ -23,7 +24,7 @@ class DebugStateSelect extends FlxState
 		states = new FlxText(64, 64, FlxG.width - 128);
 		stateList = [
 			DebugSkinSelect, DebugSongSelectState, DebugStrumsState, IntroState, MenuState, SongSelectState, VisualState, AudioState, SongState, OptionsState,
-			ChartEditorState
+			ChartEditorState, OsuSongSelectState
 		];
 		for (sn in stateList)
 		{

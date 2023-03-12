@@ -19,8 +19,9 @@ typedef OsuBeatMap =
 
 class OsuParser
 {
-	public static function parseMap(code:String):OsuBeatMap
+	public static function parseMap(song:String, diff:String):OsuBeatMap
 	{
+		var code = QMAssets.readModChart('mania', (song.toLowerCase() + '/' + diff.toLowerCase())).trim();
 		var keyValueSectors = ['General', 'Editor', 'Metadata', 'Difficulty', 'Colours'];
 		var lines = code.split('\n');
 		var finalBeatMap:OsuBeatMap = {

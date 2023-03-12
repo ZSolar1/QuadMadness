@@ -1,5 +1,6 @@
 package maps;
 
+import flixel.math.FlxMath;
 import maps.OsuParser.OsuBeatMap;
 import gameplay.Note;
 import maps.FNF.SwagSong;
@@ -37,7 +38,17 @@ class Convert
 	public static function OsuMania(song:OsuBeatMap):MapChart
 	{
 		var notes:Array<Note> = new Array<Note>();
-		for (hitobject in song.HitObjects) {}
-		return new MapChart(notes, []);
+		var bpms:Array<Float> = new Array<Float>();
+		for (hitobject in song.HitObjects)
+		{
+			var note = new Note(hitobject[2], Math.floor(FlxMath.bound(hitobject[0] * 4 / 512, 0, 3)),
+				Std.parseFloat(hitobject[5]) - Std.parseFloat(hitobject[2]));
+			notes.push(note);
+		}
+		for (timingpoint in song.TimingPoints)
+		{
+			bpms.push(1 / Std.parseFloat(timingpoint[1]) * 1000 * 60);
+		}
+		return new MapChart(notes, bpms);
 	}
 }

@@ -1,5 +1,6 @@
 package gameplay;
 
+import maps.OsuParser;
 import flixel.system.ui.FlxSoundTray;
 import hscript.Interp;
 import flixel.FlxCamera;
@@ -36,6 +37,7 @@ class SongState extends FlxState
 	public static var STRUM_SIZE = 16;
 	public static var songName:String = '';
 	public static var songDiff:String = '';
+	public static var songType:String = 'mania';
 
 	var background:FlxSprite;
 
@@ -43,11 +45,9 @@ class SongState extends FlxState
 
 	// All song types:
 	// native -  - TODO
-	// mania - TODO
+	// mania - Uhhh well
 	// quaver - TODO
 	// fnf - Almost done
-	var songType:String = 'fnf';
-
 	var strums:FlxTypedGroup<StrumNote>;
 	var particles:FlxTypedGroup<NoteParticle>;
 	var allNotes:Array<Note>;
@@ -150,12 +150,18 @@ class SongState extends FlxState
 		else
 			STRUM_Y = 16;
 		trace(Conductor.hitFrame);
+		trace('Ready to load song');
 		if (songType == 'fnf')
 		{
 			if (songDiff == 'normal' && !QMAssets.exists('mods/fnf/$songName/$songName-normal.json'))
 				chart = Convert.FNF(Song.loadFromJson('$songName.json', songName));
 			else
 				chart = Convert.FNF(Song.loadFromJson('$songName-$songDiff.json', songName));
+		}
+		else if (songType == 'mania')
+		{
+			chart = Convert.OsuMania(OsuParser.parseMap(songName, songDiff));
+			trace('Loaded an osu!mania map');
 		}
 		allNotes = new Array<Note>();
 		allNotes = chart.notes;
@@ -182,7 +188,13 @@ class SongState extends FlxState
 			music = Sound.fromFile('mods/fnf/$songName/Inst.ogg');
 			voices = new FlxSound().loadEmbedded(Sound.fromFile('mods/fnf/$songName/Voices.ogg'), false);
 		}
+		else if (songType == 'mania')
+		{
+			trace('mods/mania/$songName/audio.mp3');
+			music = Sound.fromFile('mods/mania/$songName/audio.mp3');
+		}
 		startCountdown();
+		trace('Started Countdown');
 	}
 
 	// Finally added beats and steps
@@ -299,6 +311,7 @@ class SongState extends FlxState
 	private function startSong():Void
 	{
 		generateNotes();
+		trace('Generated Notes');
 		if (songType == 'fnf')
 		{
 			FlxG.sound.playMusic(music, 1, false);
@@ -307,7 +320,13 @@ class SongState extends FlxState
 			FlxG.sound.music.onComplete = endSong;
 			// voices.play(true);
 		}
+		else if (songType == 'mania')
+		{
+			FlxG.sound.playMusic(music, 1, false);
+			FlxG.sound.music.onComplete = endSong;
+		}
 		startedSong = true;
+		trace('Started Song');
 	}
 
 	private function createParticle(x:Float, y:Float)
@@ -406,7 +425,8 @@ class SongState extends FlxState
 	{
 		healthBar.percent = 0;
 		FlxG.sound.music.pause();
-		voices.pause();
+		if (songType == 'fnf')
+			voices.pause();
 		startedSong = false;
 		FlxTween.tween(healthBar, {angle: 5, y: 2000}, 2, {ease: FlxEase.quadIn});
 		FlxTween.tween(positionBar, {angle: -5, y: 1000}, 4, {ease: FlxEase.quadIn});
@@ -589,7 +609,8 @@ class SongState extends FlxState
 			if (Controls.justPressed('pause'))
 			{
 				FlxG.sound.music.pause();
-				voices.pause();
+				if (songType == 'fnf')
+					voices.pause();
 				var pss = new PauseSubState(0, 0, [songName, songDiff, misses, accuracy]);
 				openSubState(pss);
 			}

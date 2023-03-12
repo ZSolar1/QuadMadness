@@ -14,7 +14,7 @@ import flixel.FlxState;
 import flixel.text.FlxText;
 import gameplay.SongState;
 
-class SongSelectState extends FlxState
+class OsuSongSelectState extends FlxState
 {
 	var selectedSong:String;
 	var selectedDiff:String;
@@ -36,7 +36,7 @@ class SongSelectState extends FlxState
 		var background = new FlxSprite(0, 0).loadGraphic('assets/images/menu/background.png');
 		background.color = 0xFF333333;
 		add(background);
-		songNameList = QMAssets.FNFreadAllCharts();
+		songNameList = QMAssets.OsuReadAllCharts();
 		songBoxes = new FlxTypedSpriteGroup<SongSelectBox>();
 		refillDiffs();
 		fillSongs();
@@ -56,7 +56,7 @@ class SongSelectState extends FlxState
 
 	private function fillDiffs()
 	{
-		songDiffList = QMAssets.FNFreadAllDiffs(songNameList[curSelected]);
+		songDiffList = QMAssets.OsuReadAllDiffs(songNameList[curSelected]);
 		var i = 0;
 		for (sd in songDiffList)
 		{
@@ -111,7 +111,7 @@ class SongSelectState extends FlxState
 
 	private function refillDiffs()
 	{
-		songDiffList = QMAssets.FNFreadAllDiffs(songNameList[curSelected]);
+		songDiffList = QMAssets.OsuReadAllDiffs(songNameList[curSelected]);
 	}
 
 	private function changeSelection(amount:Int)
@@ -122,7 +122,8 @@ class SongSelectState extends FlxState
 			curSelected = 0;
 		if (curSelected < 0)
 			curSelected = songBoxes.length - 1;
-		refillDiffs();
+		if (!selectingDiff)
+			refillDiffs();
 	}
 
 	override public function update(elapsed:Float)
@@ -148,7 +149,7 @@ class SongSelectState extends FlxState
 					trace('SelectedN: $curSelected, Diff: $selectedDiff');
 					SongState.songName = selectedSong;
 					SongState.songDiff = selectedDiff;
-					SongState.songType = 'fnf';
+					SongState.songType = 'mania';
 					var songState:SongState = new SongState();
 					FlxG.switchState(songState);
 				}
@@ -167,34 +168,5 @@ class SongSelectState extends FlxState
 			MapPackager.extractSong(songNameList[curSelected]);
 		}
 		songBoxes.y = FlxMath.lerp(prevSongBoxY, -(curSelected * 152 - (152 * 2)), 0.02);
-	}
-}
-
-class ModifierSelectionSubState extends FlxSubState
-{
-	/* * Modifiers:
-	 * * Neutral:
-	 * Health modifier (Gain: 1.25x, Drain: 0.5x)
-	 * Hit adjust (300: 0.75, 200: 0.125, 100: 0.125)
-	 * Slower song (0.75x)
-	 * 
-	 * * Easier:
-	 * No Fail
-	 * 
-	 * * Harder:
-	 * Fading (Fade-Out, Fade-In)
-	 * Instakill
-	 * 
-	 * * No score:
-	 * Autoplay
-	 */
-	override function create()
-	{
-		super.create();
-	}
-
-	override function update(elapsed:Float)
-	{
-		super.update(elapsed);
 	}
 }

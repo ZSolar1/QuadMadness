@@ -1,6 +1,7 @@
 package;
 
 import openfl.utils.ByteArray;
+
 using StringTools;
 
 class QMAssets
@@ -89,6 +90,34 @@ class QMAssets
 	{
 		#if sys
 		return sys.FileSystem.readDirectory('mods/fnf/');
+		#else
+		trace('File reading cancelled, client is not on sys-compatible platform.');
+		return null;
+		#end
+	}
+
+	/**
+		Retrieve all folder names inside osu!mania songs folder
+	**/
+	public static function OsuReadAllCharts():Array<String>
+	{
+		#if sys
+		trace(sys.FileSystem.readDirectory('mods/mania/'));
+		return sys.FileSystem.readDirectory('mods/mania/');
+		#else
+		trace('File reading cancelled, client is not on sys-compatible platform.');
+		return null;
+		#end
+	}
+
+	/**
+		Retrieve all filenames inside an fnf song folder
+	**/
+	public static function OsuReadAllDiffs(song:String):Array<String>
+	{
+		#if sys
+		trace(sys.FileSystem.readDirectory('mods/mania/$song/'));
+		return sys.FileSystem.readDirectory('mods/mania/$song/');
 		#else
 		trace('File reading cancelled, client is not on sys-compatible platform.');
 		return null;
