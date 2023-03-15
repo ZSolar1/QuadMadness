@@ -29,10 +29,12 @@ class ParallaxSprite extends FlxSprite
 	override function draw()
 	{
 		super.draw();
+		#if desktop
 		if (parallaxed)
 		{
 			x = baseX + FlxMath.remapToRange(FlxG.mouse.x, 0, FlxG.width, -parallaxLimit, parallaxLimit);
 			y = baseY + FlxMath.remapToRange(FlxG.mouse.y, 0, FlxG.height, -parallaxLimit, parallaxLimit);
 		}
+		#end
 	}
 }

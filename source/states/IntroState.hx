@@ -7,6 +7,10 @@ import flixel.FlxSprite;
 import flixel.FlxState;
 import flixel.text.FlxText;
 import flixel.tweens.FlxTween;
+#if mobile
+import flixel.input.touch.FlxTouch;
+import flixel.input.touch.FlxTouchManager;
+#end
 
 class IntroState extends FlxState
 {
@@ -67,8 +71,11 @@ class IntroState extends FlxState
 		super.update(elapsed);
 		// if (FlxG.keys.justPressed.F7)
 		// 	FlxG.switchState(new DebugStrumsState());
-
+		#if desktop
 		if (FlxG.keys.justPressed.ENTER || FlxG.mouse.justPressed)
+		#else
+		if (FlxG.touches.getFirst() != null && FlxG.touches.getFirst().justPressed)
+		#end
 		{
 			FlxTween.cancelTweensOf(title);
 			FlxTween.cancelTweensOf(subtitle);
