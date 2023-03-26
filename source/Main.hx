@@ -1,5 +1,6 @@
 package;
 
+import SongSaveData.Scores;
 import states.CrashHandlerState;
 import openfl.events.Event;
 import haxe.CallStack;
@@ -77,6 +78,7 @@ class Main extends Sprite
 		};
 
 		Preferences.loadPrefs();
+		Scores.loadSavedScores();
 		Globals.version = Lib.application.meta.get('version');
 
 		#if desktop

@@ -1,5 +1,6 @@
 package gameplay;
 
+import flixel.util.FlxStringUtil;
 import maps.OsuParser;
 import flixel.system.ui.FlxSoundTray;
 import hscript.Interp;
@@ -38,6 +39,9 @@ class SongState extends FlxState
 	public static var songName:String = '';
 	public static var songDiff:String = '';
 	public static var songType:String = 'mania';
+
+	var formattedName:String = '';
+	var formattedDiff:String = '';
 
 	var background:FlxSprite;
 
@@ -104,9 +108,19 @@ class SongState extends FlxState
 		super.create();
 
 		instance = this;
+		if (songType == 'fnf')
+		{
+			formattedName = FlxStringUtil.toTitleCase(StringTools.replace(songName, '-', ' '));
+			formattedDiff = FlxStringUtil.toTitleCase(StringTools.replace(songDiff, '-', ' '));
+		}
+		else
+		{
+			formattedName = FlxStringUtil.toTitleCase(songName);
+			formattedDiff = FlxStringUtil.toTitleCase(songDiff);
+		}
 
 		// FlxG.camera.pixelPerfectRender = false;
-		QMDiscordRPC.changePresence('Starting $songName ($songDiff)', null);
+		QMDiscordRPC.changePresence('Starting $formattedName ($formattedDiff)', null);
 		scrollSpeed = Preferences.scrollSpeed;
 
 		background = new FlxSprite(0, 0).loadGraphic('assets/images/menu/background.png');
@@ -447,7 +461,7 @@ class SongState extends FlxState
 		});
 		new FlxTimer().start(3, function(tmr:FlxTimer)
 		{
-			openSubState(new LostSubState(0, 0, [songName, songDiff, misses, accuracy, score, totalHit, combo, maxCombo]));
+			openSubState(new LostSubState(0, 0, [formattedName, formattedDiff, misses, accuracy, score, totalHit, combo, maxCombo]));
 		});
 	}
 
@@ -502,7 +516,7 @@ class SongState extends FlxState
 
 		stats.text = 'Hits: $totalHit\nMisses: $misses\nScore: $score\nCombo: $combo / $maxCombo\nAccuracy: $accuracy%';
 		stats.y = FlxG.height - (15 + stats.height);
-		QMDiscordRPC.changePresence('Playing $songName ($songDiff)', 'Misses: $misses, Acc: $accuracy%');
+		QMDiscordRPC.changePresence('Playing $formattedName ($formattedDiff)', 'Misses: $misses, Acc: $accuracy%');
 	}
 
 	private function onKeyPress(event:KeyboardEvent):Void
@@ -570,8 +584,14 @@ class SongState extends FlxState
 
 	private function endSong()
 	{
-		positionBar.parentVariable = '';
-		positionBar.value = 1;
+		Scores.saveSong(songName, songDiff, {
+			accuracy: accuracy,
+			misses: misses,
+			score: score,
+			hits: totalHit,
+			maxCombo: maxCombo
+		});
+		Scores.saveScores();
 		new FlxTimer().start(1, function(tmr)
 		{
 			FlxG.switchState(new MenuState());
@@ -611,7 +631,7 @@ class SongState extends FlxState
 				FlxG.sound.music.pause();
 				if (songType == 'fnf')
 					voices.pause();
-				var pss = new PauseSubState(0, 0, [songName, songDiff, misses, accuracy]);
+				var pss = new PauseSubState(0, 0, [formattedName, formattedDiff, misses, accuracy]);
 				openSubState(pss);
 			}
 

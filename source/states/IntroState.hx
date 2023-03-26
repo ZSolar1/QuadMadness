@@ -1,5 +1,9 @@
 package states;
 
+import sys.net.Address;
+import haxe.io.Bytes;
+import sys.net.Host;
+import sys.net.UdpSocket;
 import flixel.util.FlxTimer;
 import Fonts.NotoSans;
 import flixel.FlxG;
@@ -27,6 +31,18 @@ class IntroState extends FlxState
 		#if desktop
 		FlxG.mouse.load(new FlxSprite().loadGraphic('assets/images/cursor.png').pixels);
 		#end
+		var socket:UdpSocket = new UdpSocket();
+		try
+		{
+			socket.connect(new Host(Host.localhost()), 9050);
+			trace('Connected successfully to the game server');
+		}
+		catch (e)
+		{
+			trace('Could not successfully connect to server because of: ${e.message}');
+		}
+		var data = 'QMGameClient';
+		trace(socket.sendTo(Bytes.ofString(data), 0, data.length, new Address()));
 		// FlxG.scaleMode = new flixel.system.scaleModes.RatioScaleMode(true);
 
 		title = new FlxText(0, FlxG.height / 2 - 40, FlxG.width, "This is Quad Madness", 28);

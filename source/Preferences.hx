@@ -24,7 +24,7 @@ class Preferences
 
 	public static function savePrefs(type:String)
 	{
-		FlxG.save.bind('options');
+		FlxG.save.bind('qm-options');
 
 		switch (type)
 		{
@@ -59,7 +59,7 @@ class Preferences
 
 	public static function loadPrefs()
 	{
-		FlxG.save.bind('options');
+		FlxG.save.bind('qm-options');
 		if (FlxG.save.data.downscroll != null)
 			downscroll = FlxG.save.data.downscroll;
 
