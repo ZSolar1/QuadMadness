@@ -62,6 +62,8 @@ class SongState extends FlxState
 	var healthBar:FlxBar;
 	var healthText:FlxText;
 
+	var rank:FlxSprite;
+
 	var downscroll:Bool;
 
 	var songPos:Float = 0.0;
@@ -103,9 +105,27 @@ class SongState extends FlxState
 	// All of the debug stuff sits here
 	var debugText:FlxText;
 
+	override function onResize(Width:Int, Height:Int)
+	{
+		FlxG.camera.zoom = 1.0;
+		super.onResize(Width, Height);
+		STRUM_X = Math.floor(Width / 2 - 256);
+		background.setGraphicSize(Width, Height);
+		background.updateHitbox();
+
+		positionBar.setPosition(STRUM_X, FlxG.height - 8);
+		healthBar.setPosition(STRUM_X + 512, FlxG.height - 512);
+		healthText.x = STRUM_X + 512 + 12;
+		for (i in 0...3)
+		{
+			strums.members[i].x = STRUM_X + (256 * i);
+		}
+	}
+
 	override public function create()
 	{
 		super.create();
+		STRUM_X = Math.floor(FlxG.width / 2 - 256);
 
 		instance = this;
 		if (songType == 'fnf')
@@ -125,8 +145,11 @@ class SongState extends FlxState
 
 		background = new FlxSprite(0, 0).loadGraphic('assets/images/menu/background.png');
 		background.color = 0xFF333333;
+		background.setGraphicSize(FlxG.width, FlxG.height);
+		background.updateHitbox();
 		add(background);
 
+		rank = new FlxSprite(15, 15).loadGraphic('assets/images/menu/ranks.png', true, 128, 128);
 		stats = new FlxText(15, FlxG.height, STRUM_X - 15);
 		stats.setFormat(Fonts.NotoSans.Light, 28);
 		stats.antialiasing = true;
@@ -151,12 +174,14 @@ class SongState extends FlxState
 		healthText.antialiasing = true;
 		updateHealthText();
 
+
 		if (Globals.debugMode)
 			add(debugText);
 		add(stats);
 		add(positionBar);
 		add(healthBar);
 		add(healthText);
+		add(rank);
 
 		downscroll = Preferences.downscroll;
 		if (downscroll)
@@ -498,6 +523,7 @@ class SongState extends FlxState
 	private function missNote(note:Note)
 	{
 		totalNotes += 1;
+		hitRating -= 1;
 		note.kill();
 		notes.remove(note, true);
 		note.destroy();
@@ -513,6 +539,18 @@ class SongState extends FlxState
 	private function updateScore()
 	{
 		accuracy = hitRating != 0 || totalNotes != 0 ? FlxMath.roundDecimal((hitRating / totalNotes) * 100, 2) : 0;
+		if (QMath.isBetween(accuracy, 0, 60, true))
+			rank.animation.frameIndex = 0;
+		else if (QMath.isBetween(accuracy, 60, 70, true))
+			rank.animation.frameIndex = 1;
+		else if (QMath.isBetween(accuracy, 70, 80, true))
+			rank.animation.frameIndex = 2;
+		else if (QMath.isBetween(accuracy, 80, 90, true))
+			rank.animation.frameIndex = 3;
+		else if (QMath.isBetween(accuracy, 90, 100, false))
+			rank.animation.frameIndex = 4;
+		else if (accuracy >= 100)
+			rank.animation.frameIndex = 5;
 
 		stats.text = 'Hits: $totalHit\nMisses: $misses\nScore: $score\nCombo: $combo / $maxCombo\nAccuracy: $accuracy%';
 		stats.y = FlxG.height - (15 + stats.height);
@@ -726,7 +764,7 @@ class PauseSubState extends FlxSubState
 
 		QMDiscordRPC.changePresence('Paused ${songData[0]} (${songData[1]})', 'Misses: ${songData[2]}, Acc: ${songData[3]}%');
 
-		resumeButton = new QButton(FlxG.width - FlxG.width / 4, 0, 1, 'play');
+		resumeButton = new QButton(FlxG.width - FlxG.width / 4, FlxG.height / 2 - 128 - 256, 1, 'play');
 		add(resumeButton);
 		add(resumeButton.icon);
 		resumeButton.appear();
@@ -736,7 +774,7 @@ class PauseSubState extends FlxSubState
 		add(restartButton.icon);
 		restartButton.appear();
 
-		exitButton = new QButton(FlxG.width - FlxG.width / 4, FlxG.height - 256, 1, 'exit');
+		exitButton = new QButton(FlxG.width - FlxG.width / 4, FlxG.height / 2 - 128 + 256, 1, 'exit');
 		add(exitButton);
 		add(exitButton.icon);
 		exitButton.appear();

@@ -39,8 +39,8 @@ class FlxFocusLostScreen extends Sprite
 		visible = false;
 		scaleX = _defaultScale;
 		scaleY = _defaultScale;
-		x = (0.5 * (Lib.current.stage.stageWidth - _width * _defaultScale) - FlxG.game.x);
-		y = (0.5 * (Lib.current.stage.stageHeight - _height * _defaultScale) - FlxG.game.y);
+		x = (0.5 * (Lib.current.width - _width * _defaultScale) - FlxG.game.x);
+		y = (0.5 * (Lib.current.height - _height * _defaultScale) - FlxG.game.y);
 
 		var text:TextField = new TextField();
 		text.width = tmp.width;

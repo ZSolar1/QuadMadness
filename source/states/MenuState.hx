@@ -1,5 +1,6 @@
 package states;
 
+import flixel.FlxSprite;
 import states.songselect.SongSelectState;
 import flixel.util.FlxColor;
 import flixel.util.FlxTimer;
@@ -8,20 +9,33 @@ import flixel.FlxState;
 import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.tweens.FlxEase;
 import flixel.tweens.FlxTween;
-import gameplay.SongState;
 import openfl.system.System;
-import options.OptionsState;
 import states.options.AudioState;
 import states.options.VisualState;
 
 class MenuState extends FlxState
 {
-	var background:ParallaxSprite;
+	var background:FlxSprite;
 	var logo:ParallaxSprite;
 
 	var buttons:FlxTypedGroup<ParallaxSprite>;
 	var buttontypes:Array<String> = [];
 	var menuMode:String = 'main';
+
+	override function onResize(Width:Int, Height:Int)
+	{
+		super.onResize(Width, Height);
+		resizeSprites();
+	}
+
+	function resizeSprites()
+	{
+		background.setGraphicSize(FlxG.width, FlxG.height);
+		background.updateHitbox();
+		logo.rebase(FlxG.width / 2, FlxG.height / 2);
+		logo.centerPos();
+		createButtons(menuMode);
+	}
 
 	override public function create()
 	{
@@ -29,7 +43,7 @@ class MenuState extends FlxState
 
 		QMDiscordRPC.changePresence('In the menus', null);
 
-		background = new ParallaxSprite(0, 0, 64);
+		background = new FlxSprite(0, 0);
 		background.loadGraphic('assets/images/menu/background.png');
 		background.scale.x = 1.25;
 		background.scale.y = 1.25;
@@ -49,6 +63,7 @@ class MenuState extends FlxState
 		FlxTween.color(logo, 1.25, FlxColor.BLACK, FlxColor.WHITE, {ease: FlxEase.expoInOut});
 		FlxTween.tween(logo, {alpha: 1}, 0.65, {ease: FlxEase.quadOut});
 		createButtons('main');
+		resizeSprites();
 	}
 
 	function exit()
@@ -78,12 +93,14 @@ class MenuState extends FlxState
 		});
 
 		menuMode = mode;
-		var mainbuttons:Array<String> = ['play', 'options', 'download', 'exit'];
-		var exitbuttons:Array<String> = ['none', 'no', 'yes', 'none'];
-		var playbuttons:Array<String> = ['singleplayer', 'editor', 'multiplayer', 'back'];
-		var dwldbuttons:Array<String> = ['none', 'internet', 'import', 'back'];
-		var prefbuttons:Array<String> = ['display', 'audio', 'input', 'back'];
-		var nonebuttons:Array<String> = ['none', 'none', 'none', 'none'];
+		var presetbuttons:Map<String, Array<String>> = [
+			"main" => ['play', 'options', 'download', 'exit'],
+			"exit" => ['none', 'no', 'yes', 'none'],
+			"play" => ['singleplayer', 'editor', 'multiplayer', 'back'],
+			"download" => ['none', 'internet', 'import', 'back'],
+			"preferences" => ['display', 'audio', 'input', 'back'],
+			"none" => ['none', 'none', 'none', 'none'],
+		];
 
 		var posX:Array<Int> = [-128, -260, 4, -128];
 		var posY:Array<Int> = [-256, -128, -128, 4];
@@ -96,21 +113,7 @@ class MenuState extends FlxState
 			button.scale.x = 0;
 			button.scale.y = 0;
 			FlxTween.tween(button, {"scale.x": 0.75, "scale.y": 0.75, alpha: 1}, 0.5, {ease: FlxEase.quadOut});
-			switch (mode)
-			{
-				case 'main':
-					buttontypes = mainbuttons;
-				case 'exit':
-					buttontypes = exitbuttons;
-				case 'play':
-					buttontypes = playbuttons;
-				case 'download':
-					buttontypes = dwldbuttons;
-				case 'preferences':
-					buttontypes = prefbuttons;
-				case 'none':
-					buttontypes = nonebuttons;
-			}
+			buttontypes = presetbuttons.get(mode);
 			button.loadGraphic('assets/images/menu/buttons/' + buttontypes[i] + '.png');
 			buttons.add(button);
 		}

@@ -1,9 +1,9 @@
 package states;
 
-import sys.net.Address;
-import haxe.io.Bytes;
-import sys.net.Host;
-import sys.net.UdpSocket;
+#if MULTIPLAYER_TEST
+import openfl.net.Socket;
+import openfl.events.ServerSocketConnectEvent;
+#end
 import flixel.util.FlxTimer;
 import Fonts.NotoSans;
 import flixel.FlxG;
@@ -22,6 +22,23 @@ class IntroState extends FlxState
 	var subtitle:FlxText;
 	var pressanykey:FlxText;
 
+	override function onResize(Width:Int, Height:Int)
+	{
+		super.onResize(Width, Height);
+		resizeSprites();
+	}
+
+	function resizeSprites()
+	{
+		title.fieldWidth = FlxG.width;
+		subtitle.fieldWidth = FlxG.width;
+		pressanykey.fieldWidth = FlxG.width;
+
+		title.y = FlxG.height / 2 - 40;
+		subtitle.y = FlxG.height / 2 + 10;
+		pressanykey.y = FlxG.height - 96;
+	}
+
 	override public function create()
 	{
 		super.create();
@@ -31,19 +48,18 @@ class IntroState extends FlxState
 		#if desktop
 		FlxG.mouse.load(new FlxSprite().loadGraphic('assets/images/cursor.png').pixels);
 		#end
-		var socket:UdpSocket = new UdpSocket();
-		try
+		#if MULTIPLAYER_TEST
+		var socket = new Socket();
+		socket.addEventListener(ServerSocketConnectEvent.CONNECT, function(listener)
 		{
-			socket.connect(new Host(Host.localhost()), 9050);
-			trace('Connected successfully to the game server');
-		}
-		catch (e)
-		{
-			trace('Could not successfully connect to server because of: ${e.message}');
-		}
-		var data = 'QMGameClient';
-		trace(socket.sendTo(Bytes.ofString(data), 0, data.length, new Address()));
-		// FlxG.scaleMode = new flixel.system.scaleModes.RatioScaleMode(true);
+			trace("Connected to game server successfully");
+			trace(socket.bytesAvailable);
+
+			socket.writeUTFBytes("QMClient");
+			socket.flush();
+		});
+		socket.connect("127.0.0.1", 25564);
+		#end
 
 		title = new FlxText(0, FlxG.height / 2 - 40, FlxG.width, "This is Quad Madness", 28);
 		subtitle = new FlxText(0, FlxG.height / 2 + 10, FlxG.width, "A free 4k VSRG game, in development", 20);
@@ -80,6 +96,8 @@ class IntroState extends FlxState
 		{
 			FlxTween.tween(pressanykey, {alpha: 1}, 1.5);
 		});
+		FlxG.scaleMode = new flixel.system.scaleModes.StageSizeScaleMode();
+		resizeSprites();
 	}
 
 	override public function update(elapsed:Float)

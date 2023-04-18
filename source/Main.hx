@@ -93,6 +93,11 @@ class Main extends Sprite
 		#end
 		addChild(new QMGame(game.width, game.height, game.initialState, game.updateFramerate, game.drawFramerate, game.skipSplash));
 		addChild(new FPSMem(2, 2, 0xFFFFFF));
+		Application.current.window.onResize.add(function(w, h)
+		{
+			FlxG.resizeGame(w, h);
+			trace(w, h);
+		});
 	};
 
 	function onCrash(e:UncaughtErrorEvent)

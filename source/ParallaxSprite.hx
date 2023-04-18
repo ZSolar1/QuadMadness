@@ -26,6 +26,17 @@ class ParallaxSprite extends FlxSprite
 		baseY -= height / 2;
 	}
 
+	public function getLimit():Float
+	{
+		return parallaxLimit;
+	}
+
+	public function rebase(x:Float, y:Float)
+	{
+		baseX = x;
+		baseY = y;
+	}
+
 	override function draw()
 	{
 		super.draw();

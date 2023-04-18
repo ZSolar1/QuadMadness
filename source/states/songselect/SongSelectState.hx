@@ -16,6 +16,7 @@ import gameplay.SongState;
 
 class SongSelectState extends FlxState
 {
+	var background:FlxSprite;
 	var selectedSong:String;
 	var selectedDiff:String;
 
@@ -29,11 +30,23 @@ class SongSelectState extends FlxState
 
 	var pickedBox:SongSelectBox;
 
+	override function onResize(Width:Int, Height:Int)
+	{
+		super.onResize(Width, Height);
+		resizeSprites();
+	}
+
+	function resizeSprites()
+	{
+		background.setGraphicSize(FlxG.width, FlxG.height);
+		background.updateHitbox();
+	}
+
 	override public function create()
 	{
 		super.create();
 
-		var background = new FlxSprite(0, 0).loadGraphic('assets/images/menu/background.png');
+		background = new FlxSprite(0, 0).loadGraphic('assets/images/menu/background.png');
 		background.color = 0xFF333333;
 		add(background);
 		songNameList = QMAssets.FNFreadAllCharts();
@@ -41,7 +54,7 @@ class SongSelectState extends FlxState
 		refillDiffs();
 		fillSongs();
 		add(songBoxes);
-		System.gc();
+		resizeSprites();
 	}
 
 	private function fillSongs()
