@@ -1,5 +1,8 @@
 package gameplay;
 
+import openfl.filters.BitmapFilterQuality;
+import openfl.filters.BlurFilter;
+import openfl.filters.BitmapFilter;
 import flixel.util.FlxStringUtil;
 import maps.OsuParser;
 import flixel.system.ui.FlxSoundTray;
@@ -63,6 +66,7 @@ class SongState extends FlxState
 	var healthText:FlxText;
 
 	var rank:FlxSprite;
+	var rankNum:Int = 0;
 
 	var downscroll:Bool;
 
@@ -149,7 +153,7 @@ class SongState extends FlxState
 		background.updateHitbox();
 		add(background);
 
-		rank = new FlxSprite(15, 15).loadGraphic('assets/images/menu/ranks.png', true, 128, 128);
+		rank = new FlxSprite(15, 25).loadGraphic('assets/images/menu/ranks.png', true, 128, 128);
 		stats = new FlxText(15, FlxG.height, STRUM_X - 15);
 		stats.setFormat(Fonts.NotoSans.Light, 28);
 		stats.antialiasing = true;
@@ -173,7 +177,6 @@ class SongState extends FlxState
 		healthText.setFormat(Fonts.NotoSans.Light, 28);
 		healthText.antialiasing = true;
 		updateHealthText();
-
 
 		if (Globals.debugMode)
 			add(debugText);
@@ -536,21 +539,39 @@ class SongState extends FlxState
 		new FlxSound().loadEmbedded(Sound.fromFile('assets/sounds/miss.ogg'), false).play(true);
 	}
 
+	var prevRank = 0;
 	private function updateScore()
 	{
 		accuracy = hitRating != 0 || totalNotes != 0 ? FlxMath.roundDecimal((hitRating / totalNotes) * 100, 2) : 0;
 		if (QMath.isBetween(accuracy, 0, 60, true))
-			rank.animation.frameIndex = 0;
+			rankNum = 0;
 		else if (QMath.isBetween(accuracy, 60, 70, true))
-			rank.animation.frameIndex = 1;
+			rankNum = 1;
 		else if (QMath.isBetween(accuracy, 70, 80, true))
-			rank.animation.frameIndex = 2;
+			rankNum = 2;
 		else if (QMath.isBetween(accuracy, 80, 90, true))
-			rank.animation.frameIndex = 3;
+			rankNum = 3;
 		else if (QMath.isBetween(accuracy, 90, 100, false))
-			rank.animation.frameIndex = 4;
+			rankNum = 4;
 		else if (accuracy >= 100)
-			rank.animation.frameIndex = 5;
+			rankNum = 5;
+		if (prevRank != rankNum)
+		{
+			rank.animation.frameIndex = rankNum;
+			var rankEffect = rank.clone();
+			rankEffect.x = rank.x;
+			rankEffect.y = rank.y;
+			rankEffect.updateHitbox();
+			add(rankEffect);
+			FlxTween.tween(rankEffect, {"scale.x": 1.5, "scale.y": 1.5, alpha: 0}, 1, {
+				ease: FlxEase.cubeOut,
+				onComplete: function(twn)
+				{
+					rankEffect.destroy();
+				}
+			});
+		}
+		prevRank = rank.animation.frameIndex;
 
 		stats.text = 'Hits: $totalHit\nMisses: $misses\nScore: $score\nCombo: $combo / $maxCombo\nAccuracy: $accuracy%';
 		stats.y = FlxG.height - (15 + stats.height);
