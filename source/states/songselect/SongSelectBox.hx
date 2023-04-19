@@ -1,5 +1,6 @@
 package states.songselect;
 
+import skin.SkinLoader;
 import flixel.math.FlxMath;
 import flixel.util.FlxStringUtil;
 import flixel.group.FlxSpriteGroup;
@@ -34,7 +35,7 @@ class SongSelectBox extends FlxSpriteGroup
 		this.id = id;
 		text.setFormat(Fonts.NotoSans.Light, 40, 0x000000);
 		text.text = FlxStringUtil.toTitleCase(songName.replace('-', ' '));
-		box.loadGraphic('assets/images/menu/songbox.png');
+		box.loadGraphic(SkinLoader.getSkinnedImage('menu/songbox.png'));
 		_height = box.height;
 		y += id * _height;
 		add(box);

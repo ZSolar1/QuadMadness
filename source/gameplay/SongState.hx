@@ -1,5 +1,6 @@
 package gameplay;
 
+import skin.SkinLoader;
 import openfl.filters.BitmapFilterQuality;
 import openfl.filters.BlurFilter;
 import openfl.filters.BitmapFilter;
@@ -120,9 +121,13 @@ class SongState extends FlxState
 		positionBar.setPosition(STRUM_X, FlxG.height - 8);
 		healthBar.setPosition(STRUM_X + 512, FlxG.height - 512);
 		healthText.x = STRUM_X + 512 + 12;
-		for (i in 0...3)
+		for (i in 0...4)
 		{
-			strums.members[i].x = STRUM_X + (256 * i);
+			strums.members[i].x = STRUM_X + (i * 128);
+		}
+		for (note in notes)
+		{
+			note.x = STRUM_X + (note.direction * 128);
 		}
 	}
 
@@ -147,13 +152,13 @@ class SongState extends FlxState
 		QMDiscordRPC.changePresence('Starting $formattedName ($formattedDiff)', null);
 		scrollSpeed = Preferences.scrollSpeed;
 
-		background = new FlxSprite(0, 0).loadGraphic('assets/images/menu/background.png');
+		background = new FlxSprite(0, 0).loadGraphic(SkinLoader.getSkinnedImage('menu/background.png'));
 		background.color = 0xFF333333;
 		background.setGraphicSize(FlxG.width, FlxG.height);
 		background.updateHitbox();
 		add(background);
 
-		rank = new FlxSprite(15, 25).loadGraphic('assets/images/menu/ranks.png', true, 128, 128);
+		rank = new FlxSprite(15, 25).loadGraphic(SkinLoader.getSkinnedImage('menu/ranks.png'), true, 128, 128);
 		stats = new FlxText(15, FlxG.height, STRUM_X - 15);
 		stats.setFormat(Fonts.NotoSans.Light, 28);
 		stats.antialiasing = true;
@@ -669,10 +674,10 @@ class SongState extends FlxState
 
 		if (controlPressed.contains(true))
 		{
-			for (keyPress in controlPressed)
-			{
-				onKeyPress(new KeyboardEvent(KeyboardEvent.KEY_DOWN));
-			}
+			// for (keyPress in controlPressed)
+			// {
+			onKeyPress(new KeyboardEvent(KeyboardEvent.KEY_DOWN));
+			// }
 		}
 
 		if (Controls.pressed('left'))

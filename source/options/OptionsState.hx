@@ -1,5 +1,6 @@
 package options;
 
+import skin.SkinLoader;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.FlxState;
@@ -44,7 +45,7 @@ class OptionsState extends FlxState
 		optionsCatNames = new FlxTypedGroup<FlxText>();
 
 		background = new ParallaxSprite(0, 0, 64);
-		background.loadGraphic('assets/images/menu/background.png');
+		background.loadGraphic(SkinLoader.getSkinnedImage('menu/background.png'));
 		background.scale.x = 1.25;
 		background.scale.y = 1.25;
 		background.antialiasing = true;

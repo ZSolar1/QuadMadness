@@ -1,5 +1,6 @@
 package states;
 
+import skin.SkinLoader;
 import flixel.FlxSprite;
 import states.songselect.SongSelectState;
 import flixel.util.FlxColor;
@@ -44,14 +45,14 @@ class MenuState extends FlxState
 		QMDiscordRPC.changePresence('In the menus', null);
 
 		background = new FlxSprite(0, 0);
-		background.loadGraphic('assets/images/menu/background.png');
+		background.loadGraphic(SkinLoader.getSkinnedImage('menu/background.png'));
 		background.scale.x = 1.25;
 		background.scale.y = 1.25;
 		background.antialiasing = true;
 		add(background);
 
 		logo = new ParallaxSprite(FlxG.width / 2, FlxG.height / 2, 24);
-		logo.loadGraphic('assets/images/logo.png');
+		logo.loadGraphic(SkinLoader.getSkinnedImage('logo.png'));
 		logo.centerPos();
 		logo.antialiasing = true;
 		add(logo);
@@ -114,7 +115,7 @@ class MenuState extends FlxState
 			button.scale.y = 0;
 			FlxTween.tween(button, {"scale.x": 0.75, "scale.y": 0.75, alpha: 1}, 0.5, {ease: FlxEase.quadOut});
 			buttontypes = presetbuttons.get(mode);
-			button.loadGraphic('assets/images/menu/buttons/' + buttontypes[i] + '.png');
+			button.loadGraphic(SkinLoader.getSkinnedImage('menu/buttons/' + buttontypes[i] + '.png'));
 			buttons.add(button);
 		}
 	}

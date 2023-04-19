@@ -62,7 +62,7 @@ class IntroState extends FlxState
 		#end
 
 		title = new FlxText(0, FlxG.height / 2 - 40, FlxG.width, "This is Quad Madness", 28);
-		subtitle = new FlxText(0, FlxG.height / 2 + 10, FlxG.width, "A free 4k VSRG game, in development", 20);
+		subtitle = new FlxText(0, FlxG.height / 2 + 10, FlxG.width, "A free 4K VSRG game, in development", 20);
 		pressanykey = new FlxText(0, FlxG.height - 96, FlxG.width, "Press ENTER / Click to continue", 20);
 
 		title.antialiasing = true;

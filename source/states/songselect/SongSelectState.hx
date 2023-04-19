@@ -1,5 +1,6 @@
 package states.songselect;
 
+import skin.SkinLoader;
 import maps.MapPackager;
 import flixel.tweens.FlxEase;
 import flixel.tweens.FlxTween;
@@ -46,7 +47,7 @@ class SongSelectState extends FlxState
 	{
 		super.create();
 
-		background = new FlxSprite(0, 0).loadGraphic('assets/images/menu/background.png');
+		background = new FlxSprite(0, 0).loadGraphic(SkinLoader.getSkinnedImage('menu/background.png'));
 		background.color = 0xFF333333;
 		add(background);
 		songNameList = QMAssets.FNFreadAllCharts();
@@ -179,7 +180,7 @@ class SongSelectState extends FlxState
 		{
 			MapPackager.extractSong(songNameList[curSelected]);
 		}
-		songBoxes.y = FlxMath.lerp(prevSongBoxY, -(curSelected * 152 - (152 * 2)), 0.02);
+		songBoxes.y = FlxMath.lerp(prevSongBoxY, -(curSelected * 152 - (152 * 2)) + (Math.abs(FlxG.height - 720) / 2), 0.02);
 	}
 }
 
