@@ -16,10 +16,7 @@ class QMath
 
 	public static function isNegative(value:Float):Bool
 	{
-		if (value < 0)
-			return true;
-		else
-			return false;
+		return value < 0;
 	}
 
 	public static function easeFromString(ease:String)

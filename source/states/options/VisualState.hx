@@ -10,10 +10,10 @@ import flixel.text.FlxText;
 class VisualState extends FlxState
 {
 	var background:ParallaxSprite;
-	var buttonBack:QButton;
-	var buttonApply:QButton;
-	var buttonAudio:QButton;
-	var buttonInput:QButton;
+	// var buttonBack:QButton;
+	// var buttonApply:QButton;
+	// var buttonAudio:QButton;
+	// var buttonInput:QButton;
 
 	var optionLabels:FlxTypedGroup<FlxText>;
 	var optionVarLabels:FlxTypedGroup<FlxText>;
@@ -46,25 +46,25 @@ class VisualState extends FlxState
 		background.antialiasing = true;
 		add(background);
 
-		buttonBack = new QButton(16, FlxG.height - 272, 1, 'back');
-		buttonAudio = new QButton(240, FlxG.height - 272, 1, 'audio');
-		buttonInput = new QButton(464, FlxG.height - 272, 1, 'input');
-		buttonApply = new QButton(FlxG.width - 272, FlxG.height - 272, 1, 'yes');
+		// buttonBack = new QButton(16, FlxG.height - 272, 1, 'back');
+		// buttonAudio = new QButton(240, FlxG.height - 272, 1, 'audio');
+		// buttonInput = new QButton(464, FlxG.height - 272, 1, 'input');
+		// buttonApply = new QButton(FlxG.width - 272, FlxG.height - 272, 1, 'yes');
 
-		add(buttonBack);
-		add(buttonAudio);
-		add(buttonInput);
-		add(buttonApply);
+		// add(buttonBack);
+		// add(buttonAudio);
+		// add(buttonInput);
+		// add(buttonApply);
 
-		add(buttonBack.icon);
-		add(buttonAudio.icon);
-		add(buttonInput.icon);
-		add(buttonApply.icon);
+		// add(buttonBack.icon);
+		// add(buttonAudio.icon);
+		// add(buttonInput.icon);
+		// add(buttonApply.icon);
 
-		buttonAudio.appear();
-		buttonBack.appear();
-		buttonInput.appear();
-		buttonApply.appear();
+		// buttonAudio.appear();
+		// buttonBack.appear();
+		// buttonInput.appear();
+		// buttonApply.appear();
 
 		optionDesc = new FlxText(0, FlxG.height - 348, FlxG.width, optionDescs[selected]);
 		optionDesc.alignment = CENTER;
@@ -104,7 +104,7 @@ class VisualState extends FlxState
 	{
 		for (i in 0...4)
 		{
-			if (!Std.isOfType(optionVars[i], Bool))
+			if (!Std.isOfType(Reflect.field(Preferences, optionVars[i]), Bool))
 				optionVarLabels.members[i].text = Reflect.field(Preferences, optionVars[i]) + optionSuffix[i];
 			else
 				switch (i)
@@ -121,28 +121,28 @@ class VisualState extends FlxState
 	{
 		super.update(elapsed);
 		updateVars();
-		if (Interactions.Clicked(buttonBack.icon))
-		{
-			buttonBack.dissapear();
-			new FlxTimer().start(0.5, function(tmr)
-			{
-				FlxG.switchState(new MenuState());
-			});
-		}
-		if (Interactions.Clicked(buttonAudio.icon))
-		{
-			buttonAudio.dissapear();
-			new FlxTimer().start(0.5, function(tmr)
-			{
-				FlxG.switchState(new AudioState());
-			});
-		}
-		if (Interactions.Clicked(buttonApply.icon))
-		{
-			buttonApply.click();
-			Preferences.savePrefs('visual');
-			Preferences.applyPrefs('visual');
-		}
+		// if (Interactions.Clicked(buttonBack.icon))
+		// {
+		// 	buttonBack.dissapear();
+		// 	new FlxTimer().start(0.5, function(tmr)
+		// 	{
+		// 		FlxG.switchState(new MenuState());
+		// 	});
+		// }
+		// if (Interactions.Clicked(buttonAudio.icon))
+		// {
+		// 	buttonAudio.dissapear();
+		// 	new FlxTimer().start(0.5, function(tmr)
+		// 	{
+		// 		FlxG.switchState(new AudioState());
+		// 	});
+		// }
+		// if (Interactions.Clicked(buttonApply.icon))
+		// {
+		// 	buttonApply.click();
+		// 	Preferences.savePrefs('visual');
+		// 	Preferences.applyPrefs('visual');
+		// }
 		if (FlxG.keys.justPressed.DOWN)
 		{
 			if (selected < 3)

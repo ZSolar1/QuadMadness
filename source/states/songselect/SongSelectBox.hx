@@ -35,7 +35,7 @@ class SongSelectBox extends FlxSpriteGroup
 		this.id = id;
 		text.setFormat(Fonts.NotoSans.Light, 40, 0x000000);
 		text.text = FlxStringUtil.toTitleCase(songName.replace('-', ' '));
-		box.loadGraphic(SkinLoader.getSkinnedImage('menu/songbox.png'));
+		box.loadGraphic(SkinLoader.getSkinnedImage('menu/optionbox.png'));
 		_height = box.height;
 		y += id * _height;
 		add(box);

@@ -59,20 +59,14 @@ class MenuState extends FlxState
 
 		buttons = new FlxTypedGroup<ParallaxSprite>();
 		add(buttons);
-		logo.alpha = 0;
-		FlxTween.color(background, 1, FlxColor.BLACK, FlxColor.WHITE, {ease: FlxEase.expoInOut});
-		FlxTween.color(logo, 1.25, FlxColor.BLACK, FlxColor.WHITE, {ease: FlxEase.expoInOut});
-		FlxTween.tween(logo, {alpha: 1}, 0.65, {ease: FlxEase.quadOut});
+		FlxG.camera.fade(0xFFFFFFFF, 0.5, true);
 		createButtons('main');
 		resizeSprites();
 	}
 
 	function exit()
 	{
-		fade();
-		FlxTween.color(background, 0.55, FlxColor.WHITE, FlxColor.BLACK, {ease: FlxEase.expoInOut});
-		FlxTween.color(logo, 0.5, FlxColor.WHITE, FlxColor.BLACK, {ease: FlxEase.expoInOut});
-		FlxTween.tween(logo, {alpha: 0}, 0.5, {ease: FlxEase.quadOut});
+		FlxG.camera.fade(0xFF000000, 0.5);
 		new FlxTimer().start(0.75, function(tmr)
 		{
 			System.exit(0);
@@ -137,47 +131,6 @@ class MenuState extends FlxState
 		});
 	}
 
-	// Menu-Mode based buttons
-	/* override public function update(elapsed:Float)
-		{
-			super.update(elapsed);
-			if (Interactions.Clicked(buttons.members[0])) // Top
-				switch (menuMode)
-				{
-					case 'main':
-						createButtons('play');
-					case 'preferences':
-						gotoPreferences(new VisualState());
-				}
-			if (Interactions.Clicked(buttons.members[1])) // Left
-				switch (menuMode)
-				{
-					case 'exit':
-						createButtons('main');
-					case 'main':
-						createButtons('preferences');
-					case 'download':
-						createButtons('main');
-				}
-			if (Interactions.Clicked(buttons.members[2])) // Right
-				switch (menuMode)
-				{
-					case 'exit':
-						exit();
-					case 'main':
-						createButtons('download');
-				}
-			if (Interactions.Clicked(buttons.members[3])) // Ti dayn?
-				switch (menuMode)
-				{
-					case 'main':
-						createButtons('exit');
-					case 'play':
-						createButtons('main');
-					case 'preferences':
-						createButtons('main');
-				}
-	}*/
 	// Button-type based buttons
 	override public function update(elapsed:Float)
 	{
@@ -227,6 +180,7 @@ class MenuState extends FlxState
 				case 'multiplayer':
 				case 'import':
 				case 'input':
+					gotoPreferences(new OptionsState());
 				case 'yes':
 					exit();
 			}

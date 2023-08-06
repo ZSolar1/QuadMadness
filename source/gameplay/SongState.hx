@@ -196,7 +196,6 @@ class SongState extends FlxState
 			STRUM_Y = FlxG.height - 16 - 128;
 		else
 			STRUM_Y = 16;
-		trace(Conductor.hitFrame);
 		trace('Ready to load song');
 		if (songType == 'fnf')
 		{
@@ -275,33 +274,28 @@ class SongState extends FlxState
 		{
 			var sustainLength = note.sustainLength / stepCrochet;
 			note.x = STRUM_X + (note.direction * note.width);
+			notes.add(note);
 			if (note.sustainLength > 0)
 			{
-				for (sustainId in 0...Math.floor(sustainLength + 1))
-				{
-					var sustainNote:Note = new Note(note.strumTime + (stepCrochet * sustainId) + (stepCrochet / scrollSpeed), note.direction, 0, true);
-					sustainNote.x = STRUM_X + (sustainNote.direction * sustainNote.width);
-					if (sustainId == Math.floor(sustainLength)) // Last sustain note
-					{
-						sustainNote.animation.frameIndex = 4;
-						sustainNote.isSustainEnd = true;
-						sustainNote.flipY = downscroll;
-					}
-					else
-					{
-						sustainNote.scale.y *= stepCrochet / 100 * 1.075;
-						sustainNote.scale.y *= scrollSpeed;
-						sustainNote.scale.y /= 3;
-					}
-
-					// For debug purposes
-					// sustainNote.alpha = 0.5;
-
-					sustainNote.updateHitbox();
-					notes.add(sustainNote);
-				}
-			}
-			notes.add(note);
+				// Sustain Itself
+				var sustainNote = new Note(note.strumTime, note.direction, 0, true);
+				var sustainHeight = note.sustainLength;
+				sustainNote.scale.y = sustainHeight / sustainNote.height / 2;
+				sustainNote.updateHitbox();
+				sustainNote.offset.y = -(sustainNote.height / 2) + 64;
+				sustainNote.x = STRUM_X + (sustainNote.direction * sustainNote.width);
+				sustainNote.sustainParent = note;
+				// Sustain Note Tail
+				var sustainEnd = new Note(note.strumTime + note.sustainLength, note.direction, 0, true);
+				sustainEnd.animation.frameIndex = 4;
+				sustainEnd.isSustainEnd = true;
+				sustainEnd.updateHitbox();
+				sustainEnd.offset.y = 128;
+				sustainEnd.x = STRUM_X + (sustainEnd.direction * sustainEnd.width);
+				sustainEnd.sustainParent = note;
+				notes.add(sustainNote);
+				notes.add(sustainEnd);
+			}		
 			// trace('Note: ' + note.x);
 		}
 		trace("Active notes: " + notes.length);
@@ -599,27 +593,31 @@ class SongState extends FlxState
 		else
 			note.canBeHit = false;
 
-		if (note.strumTime < songPos && !note.canBeHit)
+		if (!note.isSustain && note.strumTime < songPos && !note.canBeHit)
+			missNote(note);
+		if (note.isSustain && (note.strumTime + note.sustainParent.sustainLength) < songPos && !note.canBeHit)
 			missNote(note);
 
 		if (note.strumTime < songPos && note.canBeHit)
 			note.late = true;
 
 		var center:Float = STRUM_Y + 128 / 2;
-		if (controlHold[note.direction] && note.isSustain && note.canBeHit)
+		if (controlHold[note.direction] && note.isSustain && note.canBeHit && !note.sustainLocked)
 		{
 			// (40     - 0             * 3            + 128         >= 72)
-			if (note.y - note.offset.y * note.scale.y + note.height >= center)
-			{
-				if (note.y < STRUM_Y + 64)
-					note.y = STRUM_Y + 64;
-				var sustainRect = new FlxRect(0, STRUM_Y + note.height / 2 - note.y, note.width * 2, note.height * 2);
-				sustainRect.y /= note.scale.y;
-				sustainRect.height -= sustainRect.y;
-				sustainRect.height += 20;
-				note.clipRect = sustainRect;
-			}
-			if (note.strumTime - songPos < 0)
+			// if (note.y - note.offset.y * note.scale.y + note.height >= center)
+			// {
+			// 	if (note.y < STRUM_Y + 64)
+			// 		note.y = STRUM_Y + 64;
+			// 	var sustainRect = new FlxRect(0, STRUM_Y + note.height / 2 - note.y, note.width * 2, note.height * 2);
+			// 	sustainRect.y /= note.scale.y;
+			// 	sustainRect.height -= sustainRect.y;
+			// 	sustainRect.height += 20;
+			// 	note.clipRect = sustainRect;
+			// }
+			if (note.strumTime - songPos < 0 && note.isSustainEnd)
+				hitNote(note);
+			if ((note.strumTime + note.sustainParent.sustainLength) - songPos < 0 && !note.isSustainEnd)
 				hitNote(note);
 		}
 		// if (controlHold[note.direction] && note.isSustain && note.canBeHit)
@@ -778,9 +776,9 @@ class SongState extends FlxState
 
 class PauseSubState extends FlxSubState
 {
-	var resumeButton:QButton;
-	var restartButton:QButton;
-	var exitButton:QButton;
+	// var resumeButton:QButton;
+	// var restartButton:QButton;
+	// var exitButton:QButton;
 	var songData:Array<Dynamic>;
 
 	public function new(x:Float, y:Float, songData:Array<Dynamic>)
@@ -790,48 +788,50 @@ class PauseSubState extends FlxSubState
 
 		QMDiscordRPC.changePresence('Paused ${songData[0]} (${songData[1]})', 'Misses: ${songData[2]}, Acc: ${songData[3]}%');
 
-		resumeButton = new QButton(FlxG.width - FlxG.width / 4, FlxG.height / 2 - 128 - 256, 1, 'play');
-		add(resumeButton);
-		add(resumeButton.icon);
-		resumeButton.appear();
+		// resumeButton = new QButton(FlxG.width - FlxG.width / 4, FlxG.height / 2 - 128 - 256, 1, 'play');
+		// add(resumeButton);
+		// add(resumeButton.icon);
+		// resumeButton.appear();
 
-		restartButton = new QButton(FlxG.width - FlxG.width / 4, FlxG.height / 2 - 128, 1, 'back');
-		add(restartButton);
-		add(restartButton.icon);
-		restartButton.appear();
+		// restartButton = new QButton(FlxG.width - FlxG.width / 4, FlxG.height / 2 - 128, 1, 'back');
+		// add(restartButton);
+		// add(restartButton.icon);
+		// restartButton.appear();
 
-		exitButton = new QButton(FlxG.width - FlxG.width / 4, FlxG.height / 2 - 128 + 256, 1, 'exit');
-		add(exitButton);
-		add(exitButton.icon);
-		exitButton.appear();
+		// exitButton = new QButton(FlxG.width - FlxG.width / 4, FlxG.height / 2 - 128 + 256, 1, 'exit');
+		// add(exitButton);
+		// add(exitButton.icon);
+		// exitButton.appear();
 	}
 
 	override function update(elapsed:Float)
 	{
 		super.update(elapsed);
-		if (Interactions.Clicked(resumeButton) || Controls.justPressed('pause'))
-		{
+		if (Controls.justPressed('pause'))
 			closeMenu();
-		}
-		if (Interactions.Clicked(restartButton))
-		{
-			restartSong();
-		}
-		if (Interactions.Clicked(exitButton))
-		{
-			closeSong();
-		}
+		// if (Interactions.Clicked(resumeButton) || Controls.justPressed('pause'))
+		// {
+		// 	closeMenu();
+		// }
+		// if (Interactions.Clicked(restartButton))
+		// {
+		// 	restartSong();
+		// }
+		// if (Interactions.Clicked(exitButton))
+		// {
+		// 	closeSong();
+		// }
 	}
 
 	private function closeMenu()
 	{
-		FlxTween.cancelTweensOf(resumeButton);
-		FlxTween.cancelTweensOf(restartButton);
-		FlxTween.cancelTweensOf(exitButton);
+		// FlxTween.cancelTweensOf(resumeButton);
+		// FlxTween.cancelTweensOf(restartButton);
+		// FlxTween.cancelTweensOf(exitButton);
 
-		resumeButton.dissapear();
-		restartButton.fade();
-		exitButton.fade();
+		// resumeButton.dissapear();
+		// restartButton.fade();
+		// exitButton.fade();
 		new FlxTimer().start(0.5, function(tmr)
 		{
 			close();
@@ -841,13 +841,13 @@ class PauseSubState extends FlxSubState
 
 	private function restartSong()
 	{
-		FlxTween.cancelTweensOf(resumeButton);
-		FlxTween.cancelTweensOf(restartButton);
-		FlxTween.cancelTweensOf(exitButton);
+		// FlxTween.cancelTweensOf(resumeButton);
+		// FlxTween.cancelTweensOf(restartButton);
+		// FlxTween.cancelTweensOf(exitButton);
 
-		restartButton.dissapear();
-		resumeButton.fade();
-		exitButton.fade();
+		// restartButton.dissapear();
+		// resumeButton.fade();
+		// exitButton.fade();
 		new FlxTimer().start(0.5, function(tmr)
 		{
 			FlxG.resetState();
@@ -856,13 +856,13 @@ class PauseSubState extends FlxSubState
 
 	private function closeSong()
 	{
-		FlxTween.cancelTweensOf(resumeButton);
-		FlxTween.cancelTweensOf(restartButton);
-		FlxTween.cancelTweensOf(exitButton);
+		// FlxTween.cancelTweensOf(resumeButton);
+		// FlxTween.cancelTweensOf(restartButton);
+		// FlxTween.cancelTweensOf(exitButton);
 
-		exitButton.dissapear();
-		restartButton.fade();
-		resumeButton.fade();
+		// exitButton.dissapear();
+		// restartButton.fade();
+		// resumeButton.fade();
 		new FlxTimer().start(0.5, function(tmr)
 		{
 			FlxG.switchState(new MenuState());
@@ -872,8 +872,8 @@ class PauseSubState extends FlxSubState
 
 class LostSubState extends FlxSubState
 {
-	var restartButton:QButton;
-	var exitButton:QButton;
+	// var restartButton:QButton;
+	// var exitButton:QButton;
 	var songData:Array<Dynamic>;
 
 	public function new(x:Float, y:Float, songData:Array<Dynamic>) // name, diff, misses, accuracy, score, hits, combo, mcombo
@@ -883,37 +883,37 @@ class LostSubState extends FlxSubState
 
 		QMDiscordRPC.changePresence('Paused ${songData[0]} (${songData[1]})', 'Misses: ${songData[2]}, Acc: ${songData[3]}%');
 
-		restartButton = new QButton(FlxG.width - FlxG.width / 4, FlxG.height / 2 - 128, 1, 'back');
-		add(restartButton);
-		add(restartButton.icon);
-		restartButton.appear();
+		// restartButton = new QButton(FlxG.width - FlxG.width / 4, FlxG.height / 2 - 128, 1, 'back');
+		// add(restartButton);
+		// add(restartButton.icon);
+		// restartButton.appear();
 
-		exitButton = new QButton(FlxG.width - FlxG.width / 4, FlxG.height - 256, 1, 'exit');
-		add(exitButton);
-		add(exitButton.icon);
-		exitButton.appear();
+		// exitButton = new QButton(FlxG.width - FlxG.width / 4, FlxG.height - 256, 1, 'exit');
+		// add(exitButton);
+		// add(exitButton.icon);
+		// exitButton.appear();
 	}
 
 	override function update(elapsed:Float)
 	{
 		super.update(elapsed);
-		if (Interactions.Clicked(restartButton))
-		{
-			restartSong();
-		}
-		if (Interactions.Clicked(exitButton))
-		{
-			closeSong();
-		}
+		// if (Interactions.Clicked(restartButton))
+		// {
+		// 	restartSong();
+		// }
+		// if (Interactions.Clicked(exitButton))
+		// {
+		// 	closeSong();
+		// }
 	}
 
 	private function restartSong()
 	{
-		FlxTween.cancelTweensOf(restartButton);
-		FlxTween.cancelTweensOf(exitButton);
+		// FlxTween.cancelTweensOf(restartButton);
+		// FlxTween.cancelTweensOf(exitButton);
 
-		restartButton.dissapear();
-		exitButton.fade();
+		// restartButton.dissapear();
+		// exitButton.fade();
 		new FlxTimer().start(0.5, function(tmr)
 		{
 			FlxG.resetState();
@@ -922,11 +922,11 @@ class LostSubState extends FlxSubState
 
 	private function closeSong()
 	{
-		FlxTween.cancelTweensOf(restartButton);
-		FlxTween.cancelTweensOf(exitButton);
+		// FlxTween.cancelTweensOf(restartButton);
+		// FlxTween.cancelTweensOf(exitButton);
 
-		exitButton.dissapear();
-		restartButton.fade();
+		// exitButton.dissapear();
+		// restartButton.fade();
 		new FlxTimer().start(0.5, function(tmr)
 		{
 			FlxG.switchState(new MenuState());

@@ -93,6 +93,7 @@ class Main extends Sprite
 		#end
 		addChild(new QMGame(game.width, game.height, game.initialState, game.updateFramerate, game.drawFramerate, game.skipSplash));
 		addChild(new FPSMem(2, 2, 0xFFFFFF));
+		FlxG.maxElapsed = Math.POSITIVE_INFINITY;
 	};
 
 	function onCrash(e:UncaughtErrorEvent)

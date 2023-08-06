@@ -1,5 +1,6 @@
 package states;
 
+import skin.SkinLoader;
 #if MULTIPLAYER_TEST
 import openfl.net.Socket;
 import openfl.events.ServerSocketConnectEvent;
@@ -18,9 +19,7 @@ import flixel.input.touch.FlxTouchManager;
 
 class IntroState extends FlxState
 {
-	var title:FlxText;
-	var subtitle:FlxText;
-	var pressanykey:FlxText;
+	var quads:Array<FlxSprite> = [];
 
 	override function onResize(Width:Int, Height:Int)
 	{
@@ -30,13 +29,7 @@ class IntroState extends FlxState
 
 	function resizeSprites()
 	{
-		title.fieldWidth = FlxG.width;
-		subtitle.fieldWidth = FlxG.width;
-		pressanykey.fieldWidth = FlxG.width;
 
-		title.y = FlxG.height / 2 - 40;
-		subtitle.y = FlxG.height / 2 + 10;
-		pressanykey.y = FlxG.height - 96;
 	}
 
 	override public function create()
@@ -61,42 +54,39 @@ class IntroState extends FlxState
 		socket.connect("127.0.0.1", 25564);
 		#end
 
-		title = new FlxText(0, FlxG.height / 2 - 40, FlxG.width, "This is Quad Madness", 28);
-		subtitle = new FlxText(0, FlxG.height / 2 + 10, FlxG.width, "A free 4K VSRG game, in development", 20);
-		pressanykey = new FlxText(0, FlxG.height - 96, FlxG.width, "Press ENTER / Click to continue", 20);
+		FlxG.scaleMode = new flixel.system.scaleModes.StageSizeScaleMode();
 
-		title.antialiasing = true;
-		subtitle.antialiasing = true;
-		pressanykey.antialiasing = true;
-
-		title.alpha = 0;
-		subtitle.alpha = 0;
-		pressanykey.alpha = 0;
-
-		title.alignment = CENTER;
-		subtitle.alignment = CENTER;
-		pressanykey.alignment = CENTER;
-
-		title.setFormat(NotoSans.Medium, 28);
-		subtitle.setFormat(NotoSans.Light, 20);
-		pressanykey.setFormat(NotoSans.Light, 24);
-
-		add(title);
-		add(subtitle);
-		add(pressanykey);
-
-		FlxTween.tween(title, {alpha: 1}, 1.5);
+		var positions:Array<Array<Float>> = [[0.0, 128.0], [128.0, 0.0], [256.0, 128.0], [128.0, 256.0]];
 
 		new FlxTimer().start(0.5, function(tmr)
 		{
-			FlxTween.tween(subtitle, {alpha: 1}, 1.5);
+			for (i in 0...4)
+			{
+				new FlxTimer().start(1 + i / 2, function(tmr)
+				{
+					var quad = new FlxSprite(FlxG.width / 2 - 256, FlxG.height / 2 - 256);
+					quad.loadGraphic(SkinLoader.getSkinnedImage('gameplay/notes.png'), true, 256, 256);
+					quad.animation.frameIndex = 0;
+					quad.x += positions[i][0];
+					quad.y += positions[i][1];
+					quad.scale.set(0.75, 0.75);
+					quad.alpha = 0;
+					FlxTween.tween(quad, {alpha: 1,}, 1);
+					quads.push(quad);
+					add(quad);
+				});
+			}
 		});
 
-		new FlxTimer().start(5, function(tmr)
+		new FlxTimer().start(4.5, function(tmr)
 		{
-			FlxTween.tween(pressanykey, {alpha: 1}, 1.5);
+			FlxG.camera.fade(0xFFFFFFFF, 0.25);
+			new FlxTimer().start(0.75, function(tmr)
+			{
+				FlxG.switchState(new MenuState());
+			});
 		});
-		FlxG.scaleMode = new flixel.system.scaleModes.StageSizeScaleMode();
+
 		resizeSprites();
 	}
 
@@ -105,23 +95,5 @@ class IntroState extends FlxState
 		super.update(elapsed);
 		// if (FlxG.keys.justPressed.F7)
 		// 	FlxG.switchState(new DebugStrumsState());
-		#if desktop
-		if (FlxG.keys.justPressed.ENTER || FlxG.mouse.justPressed)
-		#else
-		if (FlxG.touches.getFirst() != null && FlxG.touches.getFirst().justPressed)
-		#end
-		{
-			FlxTween.cancelTweensOf(title);
-			FlxTween.cancelTweensOf(subtitle);
-			FlxTween.cancelTweensOf(pressanykey);
-			FlxTween.tween(title, {alpha: 0}, 1.5);
-			FlxTween.tween(subtitle, {alpha: 0}, 1.5);
-			FlxTween.tween(pressanykey, {alpha: 0}, 1.5);
-
-			new FlxTimer().start(2, function(tmr)
-			{
-				FlxG.switchState(new MenuState());
-			});
-		}
 	}
 }

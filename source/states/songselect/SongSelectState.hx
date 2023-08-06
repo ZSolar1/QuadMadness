@@ -170,7 +170,19 @@ class SongSelectState extends FlxState
 		}
 		if (FlxG.keys.justPressed.ESCAPE)
 		{
-			FlxG.switchState(new MenuState());
+			if (pickedBox != null)
+			{
+				FlxTween.tween(pickedBox, {x: -620, y: 40}, 1.5, {ease: FlxEase.cubeOut});
+				pickedBox.listed = false;
+			}
+			for (box in songBoxes)
+			{
+				box.listed = false;
+			}
+			FlxG.camera.fade(0xFFFFFFFF, 0.5, false, function()
+			{
+				FlxG.switchState(new MenuState());
+			});
 		}
 		if (FlxG.keys.justPressed.F1)
 		{

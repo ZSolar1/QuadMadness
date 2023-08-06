@@ -10,10 +10,10 @@ import flixel.text.FlxText;
 class AudioState extends FlxState
 {
 	var background:ParallaxSprite;
-	var buttonBack:QButton;
-	var buttonApply:QButton;
-	var buttonVideo:QButton;
-	var buttonInput:QButton;
+	// var buttonBack:QButton;
+	// var buttonApply:QButton;
+	// var buttonVideo:QButton;
+	// var buttonInput:QButton;
 
 	var optionLabels:FlxTypedGroup<FlxText>;
 	var optionVarLabels:FlxTypedGroup<FlxText>;
@@ -46,25 +46,25 @@ class AudioState extends FlxState
 		background.antialiasing = true;
 		add(background);
 
-		buttonBack = new QButton(16, FlxG.height - 272, 1, 'back');
-		buttonVideo = new QButton(240, FlxG.height - 272, 1, 'display');
-		buttonInput = new QButton(464, FlxG.height - 272, 1, 'input');
-		buttonApply = new QButton(FlxG.width - 272, FlxG.height - 272, 1, 'yes');
+		// buttonBack = new QButton(16, FlxG.height - 272, 1, 'back');
+		// buttonVideo = new QButton(240, FlxG.height - 272, 1, 'display');
+		// buttonInput = new QButton(464, FlxG.height - 272, 1, 'input');
+		// buttonApply = new QButton(FlxG.width - 272, FlxG.height - 272, 1, 'yes');
 
-		add(buttonBack);
-		add(buttonVideo);
-		add(buttonInput);
-		add(buttonApply);
+		// add(buttonBack);
+		// add(buttonVideo);
+		// add(buttonInput);
+		// add(buttonApply);
 
-		add(buttonBack.icon);
-		add(buttonVideo.icon);
-		add(buttonInput.icon);
-		add(buttonApply.icon);
+		// add(buttonBack.icon);
+		// add(buttonVideo.icon);
+		// add(buttonInput.icon);
+		// add(buttonApply.icon);
 
-		buttonVideo.appear();
-		buttonBack.appear();
-		buttonInput.appear();
-		buttonApply.appear();
+		// buttonVideo.appear();
+		// buttonBack.appear();
+		// buttonInput.appear();
+		// buttonApply.appear();
 
 		optionDesc = new FlxText(0, FlxG.height - 348, FlxG.width, optionDescs[selected]);
 		optionDesc.alignment = CENTER;
@@ -112,28 +112,28 @@ class AudioState extends FlxState
 	{
 		super.update(elapsed);
 		updateVars();
-		if (Interactions.Clicked(buttonBack.icon))
-		{
-			buttonBack.dissapear();
-			new FlxTimer().start(0.5, function(tmr)
-			{
-				FlxG.switchState(new MenuState());
-			});
-		}
-		if (Interactions.Clicked(buttonVideo.icon))
-		{
-			buttonVideo.dissapear();
-			new FlxTimer().start(0.5, function(tmr)
-			{
-				FlxG.switchState(new VisualState());
-			});
-		}
-		if (Interactions.Clicked(buttonApply.icon))
-		{
-			buttonApply.click();
-			Preferences.savePrefs('audio');
-			Preferences.applyPrefs('audio');
-		}
+		// if (Interactions.Clicked(buttonBack.icon))
+		// {
+		// 	buttonBack.dissapear();
+		// 	new FlxTimer().start(0.5, function(tmr)
+		// 	{
+		// 		FlxG.switchState(new MenuState());
+		// 	});
+		// }
+		// if (Interactions.Clicked(buttonVideo.icon))
+		// {
+		// 	buttonVideo.dissapear();
+		// 	new FlxTimer().start(0.5, function(tmr)
+		// 	{
+		// 		FlxG.switchState(new VisualState());
+		// 	});
+		// }
+		// if (Interactions.Clicked(buttonApply.icon))
+		// {
+		// 	buttonApply.click();
+		// 	Preferences.savePrefs('audio');
+		// 	Preferences.applyPrefs('audio');
+		// }
 		if (FlxG.keys.justPressed.DOWN)
 		{
 			if (selected < 3)
