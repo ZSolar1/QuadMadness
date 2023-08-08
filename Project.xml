@@ -31,7 +31,7 @@
 
 	<set name="BUILD_DIR" value="export/debug" if="debug" />
 	<set name="BUILD_DIR" value="export/java" if="java" />
-	<set name="BUILD_DIR" value="export" unless="debug"/>
+	<set name="BUILD_DIR" value="export"/>
 	<set name="BUILD_DIR" value="export/x86" if="32"/>
 
 	<source path="source" />
@@ -56,6 +56,13 @@
 
 	<!-- For multiplayer testing, remove when done -->
 	<haxedef name="MULTIPLAYER_TEST" />
+
+	<!-- So crash screen works as intended -->
+	<haxedef name="HXCPP_STACK_TRACE" />
+	<haxedef name="HXCPP_STACK_LINE" />
+	<haxedef name="HXCPP_CHECK_POINTER" />
+	
+	<haxeflag name="-dce" value="full" />
 
 	<!--Enable the Flixel core recording system-->
 	<!--<haxedef name="FLX_RECORD" />-->

@@ -51,10 +51,19 @@ class SongSelectState extends FlxState
 		background.color = 0xFF333333;
 		add(background);
 		songNameList = QMAssets.FNFreadAllCharts();
-		songBoxes = new FlxTypedSpriteGroup<SongSelectBox>();
-		refillDiffs();
-		fillSongs();
-		add(songBoxes);
+		if (songNameList == null)
+		{
+			trace("No songs!");
+			var noSongs = new SongSelectBox(0, "No songs!", 0);
+			add(noSongs);
+		}
+		else
+		{
+			songBoxes = new FlxTypedSpriteGroup<SongSelectBox>();
+			refillDiffs();
+			fillSongs();
+			add(songBoxes);
+		}
 		resizeSprites();
 	}
 
@@ -183,14 +192,6 @@ class SongSelectState extends FlxState
 			{
 				FlxG.switchState(new MenuState());
 			});
-		}
-		if (FlxG.keys.justPressed.F1)
-		{
-			MapPackager.packageSong('fnf', songNameList[curSelected]);
-		}
-		if (FlxG.keys.justPressed.F2)
-		{
-			MapPackager.extractSong(songNameList[curSelected]);
 		}
 		songBoxes.y = FlxMath.lerp(prevSongBoxY, -(curSelected * 152 - (152 * 2)) + (Math.abs(FlxG.height - 720) / 2), 0.02);
 	}

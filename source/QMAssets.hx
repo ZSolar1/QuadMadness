@@ -1,5 +1,7 @@
 package;
 
+import haxe.io.Bytes;
+import qmp.QMPackage;
 import openfl.utils.ByteArray;
 
 using StringTools;
@@ -158,10 +160,10 @@ class QMAssets
 	/**
 		Write packaged chart into a file
 	**/
-	public static function writeChartPackage(name:String, data:ByteArray)
+	public static function writeChartPackage(name:String, data:QMPackage)
 	{
 		#if sys
-		sys.io.File.saveContent('mods/charts/$name.qmp', data.toString());
+		sys.io.File.saveContent('mods/charts/$name.qmp', haxe.Json.stringify(data));
 		trace('Writing a packaged chart to \'mods/charts/$name.qmp\'');
 		#else
 		trace('File writing cancelled, client is not on sys-compatible platform.');
@@ -203,8 +205,8 @@ class QMAssets
 	public static function writeChart(name:String, diff:String, content:String)
 	{
 		#if sys
-		sys.io.File.saveContent(createModFilePath('charts', '$name/$diff.json'), content);
-		trace('Writing a file to ${createModFilePath('charts', '$name/$diff.json')}');
+		sys.io.File.saveBytes(createModFilePath('charts', '$name/$diff'), Bytes.ofString(content));
+		trace('Writing a file to ${createModFilePath('charts', '$name/$diff')}');
 		#else
 		trace('File writing cancelled, client is not on sys-compatible platform.');
 		return null;
