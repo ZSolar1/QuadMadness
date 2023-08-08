@@ -54,13 +54,13 @@ class CrashHandlerState extends FlxState
 		background.color = 0xFF333333;
 		add(background);
 
-		error = new FlxText(0, 10, FlxG.width, 'Error');
+		error = new FlxText(0, 10, FlxG.width, 'Damn!');
 		error.setFormat(Fonts.NotoSans.Regular, 48, 0xFF4444, CENTER);
 		add(error);
 		error.alpha = 0;
 		error.y = -error.height;
 
-		errorMessage = new FlxText(FlxG.width / 2, FlxG.height / 2, FlxG.width / 2, messageText);
+		errorMessage = new FlxText(FlxG.width / 2, FlxG.height / 2, FlxG.width / 2, 'Here\'s the error:\n$messageText');
 		errorMessage.setFormat(Fonts.NotoSans.Light, 24, 0xFFFFFF, CENTER);
 		add(errorMessage);
 		errorMessage.alpha = 0;

@@ -52,7 +52,7 @@ class SongSelectBox extends FlxSpriteGroup
 		super.draw();
 		if (listed)
 			x = FlxMath.lerp(x, baseX + Math.abs(y / FlxG.height * 2 - 1) * 128, 0.02);
-		text.x = x + 60;
+		text.x = x + 90;
 		text.y = y + 45;
 	}
 }

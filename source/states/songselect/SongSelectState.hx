@@ -63,7 +63,7 @@ class SongSelectState extends FlxState
 		var i = 0;
 		for (sn in songNameList)
 		{
-			songBoxes.add(new SongSelectBox(FlxG.width - 524, sn, i));
+			songBoxes.add(new SongSelectBox(FlxG.width - 600, sn, i));
 			i++;
 		}
 	}
@@ -74,7 +74,7 @@ class SongSelectState extends FlxState
 		var i = 0;
 		for (sd in songDiffList)
 		{
-			songBoxes.add(new SongSelectBox(FlxG.width - 524, sd, i));
+			songBoxes.add(new SongSelectBox(FlxG.width - 600, sd, i));
 			i++;
 		}
 	}
@@ -92,7 +92,7 @@ class SongSelectState extends FlxState
 		{
 			box.listed = false;
 		}
-		FlxTween.tween(pickedBox, {x: 0, y: 40}, 1, {ease: FlxEase.cubeOut});
+		FlxTween.tween(pickedBox, {x: 50, y: 40}, 1, {ease: FlxEase.cubeOut});
 		FlxTween.tween(songBoxes, {x: FlxG.width + 524}, 1, {
 			ease: FlxEase.cubeInOut,
 			onComplete: function(twn)

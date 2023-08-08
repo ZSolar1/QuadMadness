@@ -54,7 +54,7 @@ class SongState extends FlxState
 	// All song types:
 	// native:  Idk
 	// mania:   Almost
-	// etterna: TODO
+	// etterna: CANCELED (maybe)
 	// fnf:     Almost
 	var strums:FlxTypedGroup<StrumNote>;
 	var particles:FlxTypedGroup<NoteParticle>;
@@ -148,7 +148,6 @@ class SongState extends FlxState
 			formattedDiff = FlxStringUtil.toTitleCase(songDiff);
 		}
 
-		// FlxG.camera.pixelPerfectRender = false;
 		QMDiscordRPC.changePresence('Starting $formattedName ($formattedDiff)', null);
 		scrollSpeed = Preferences.scrollSpeed;
 
@@ -296,7 +295,7 @@ class SongState extends FlxState
 				notes.add(sustainNote);
 				notes.add(sustainEnd);
 			}		
-			// trace('Note: ' + note.x);
+
 		}
 		trace("Active notes: " + notes.length);
 		add(notes);
@@ -346,7 +345,7 @@ class SongState extends FlxState
 				startSong();
 			}
 		}, 4);
-		// startSong();
+
 	}
 
 	private function startSong():Void
@@ -359,7 +358,7 @@ class SongState extends FlxState
 			FlxG.sound.list.add(voices);
 			voices.play(true, 0.0);
 			FlxG.sound.music.onComplete = endSong;
-			// voices.play(true);
+
 		}
 		else if (songType == 'mania')
 		{
@@ -383,7 +382,7 @@ class SongState extends FlxState
 		var diff = Math.abs(note.strumTime - songPos);
 		if (!note.isSustain)
 		{
-			// trace(diff);
+
 			if (QMath.isBetween(diff, Conductor.hitFrame * 0.75, Conductor.hitFrame, true))
 			{
 				score = 100;
@@ -406,8 +405,7 @@ class SongState extends FlxState
 				trace('Got a weird diff of: $diff, to make the game fair, gonna count that as a 350 press but with no score');
 			}
 			popUpRating(score);
-			// score = 350;
-			// rating = 1;
+
 		}
 		else
 		{
@@ -471,7 +469,7 @@ class SongState extends FlxState
 		startedSong = false;
 		FlxTween.tween(healthBar, {angle: 5, y: 2000}, 2, {ease: FlxEase.quadIn});
 		FlxTween.tween(positionBar, {angle: -5, y: 1000}, 4, {ease: FlxEase.quadIn});
-		// FlxTween.tween(stats, {angle: 10, y: 1750}, 3, {ease: FlxEase.quadIn});
+
 		notes.forEachAlive(function(note:Note)
 		{
 			FlxTween.tween(note, {alpha: 0}, 2);
@@ -510,12 +508,12 @@ class SongState extends FlxState
 			totalHit += 1;
 			score += judge[0];
 			combo += 1;
-			// Sound.loadFromFile('assets/sounds/hitsound.ogg')
+
 			new FlxSound().loadEmbedded(Sound.fromFile('assets/sounds/hitsound.ogg'), false).play(true);
 		}
 		hitRating += judge[1];
 		changeHealth(0.0125);
-		// trace(hitRating);
+
 		totalNotes += 1;
 		if (combo > maxCombo)
 			maxCombo = combo;
@@ -604,44 +602,11 @@ class SongState extends FlxState
 		var center:Float = STRUM_Y + 128 / 2;
 		if (controlHold[note.direction] && note.isSustain && note.canBeHit && !note.sustainLocked)
 		{
-			// (40     - 0             * 3            + 128         >= 72)
-			// if (note.y - note.offset.y * note.scale.y + note.height >= center)
-			// {
-			// 	if (note.y < STRUM_Y + 64)
-			// 		note.y = STRUM_Y + 64;
-			// 	var sustainRect = new FlxRect(0, STRUM_Y + note.height / 2 - note.y, note.width * 2, note.height * 2);
-			// 	sustainRect.y /= note.scale.y;
-			// 	sustainRect.height -= sustainRect.y;
-			// 	sustainRect.height += 20;
-			// 	note.clipRect = sustainRect;
-			// }
 			if (note.strumTime - songPos < 0 && note.isSustainEnd)
 				hitNote(note);
 			if ((note.strumTime + note.sustainParent.sustainLength) - songPos < 0 && !note.isSustainEnd)
 				hitNote(note);
 		}
-		// if (controlHold[note.direction] && note.isSustain && note.canBeHit)
-		// {
-		// 	// if (note.y < STRUM_Y + 128)
-		// 	// {
-		// 	// 	var sustainRect:FlxRect = new FlxRect(0, 0, note.width * 2, note.height * 2);
-		// 	// 	sustainRect.y /= note.scale.y;
-		// 	// 	sustainRect.height -= sustainRect.y;
-		// 	// 	sustainRect.height += 20;
-		// 	// 	note.clipRect = sustainRect;
-		// 	// 	trace(note.clipRect.height);
-		// 	// }
-		// 	if (note.y < STRUM_Y + note.height && note.y > STRUM_Y + note.height / 2)
-		// 	{
-		// 		var sustainRect = new FlxRect(0, STRUM_Y + note.height / 2 - note.y, note.width * 2, note.height * 2);
-		// 		sustainRect.y /= note.scale.y;
-		// 		sustainRect.height -= sustainRect.y;
-		// 		sustainRect.height += 20;
-		// 		note.clipRect = sustainRect;
-		// 	}
-		// 	if (note.strumTime - songPos < 0)
-		// 		hitNote(note);
-		// }
 	}
 
 	private function endSong()
@@ -672,10 +637,7 @@ class SongState extends FlxState
 
 		if (controlPressed.contains(true))
 		{
-			// for (keyPress in controlPressed)
-			// {
 			onKeyPress(new KeyboardEvent(KeyboardEvent.KEY_DOWN));
-			// }
 		}
 
 		if (Controls.pressed('left'))
@@ -727,8 +689,6 @@ class SongState extends FlxState
 				else
 					note.y = (STRUM_Y + (songPos - note.strumTime) * (0.45 * FlxMath.roundDecimal(scrollSpeed, 2)) + Preferences.visualOffset);
 				checkForHit(note);
-				// if (note.y < STRUM_Y)
-				// 	note.kill();
 			};
 
 			steps = songPos / stepCrochet;
@@ -776,9 +736,7 @@ class SongState extends FlxState
 
 class PauseSubState extends FlxSubState
 {
-	// var resumeButton:QButton;
-	// var restartButton:QButton;
-	// var exitButton:QButton;
+
 	var songData:Array<Dynamic>;
 
 	public function new(x:Float, y:Float, songData:Array<Dynamic>)
@@ -788,20 +746,6 @@ class PauseSubState extends FlxSubState
 
 		QMDiscordRPC.changePresence('Paused ${songData[0]} (${songData[1]})', 'Misses: ${songData[2]}, Acc: ${songData[3]}%');
 
-		// resumeButton = new QButton(FlxG.width - FlxG.width / 4, FlxG.height / 2 - 128 - 256, 1, 'play');
-		// add(resumeButton);
-		// add(resumeButton.icon);
-		// resumeButton.appear();
-
-		// restartButton = new QButton(FlxG.width - FlxG.width / 4, FlxG.height / 2 - 128, 1, 'back');
-		// add(restartButton);
-		// add(restartButton.icon);
-		// restartButton.appear();
-
-		// exitButton = new QButton(FlxG.width - FlxG.width / 4, FlxG.height / 2 - 128 + 256, 1, 'exit');
-		// add(exitButton);
-		// add(exitButton.icon);
-		// exitButton.appear();
 	}
 
 	override function update(elapsed:Float)
@@ -809,29 +753,10 @@ class PauseSubState extends FlxSubState
 		super.update(elapsed);
 		if (Controls.justPressed('pause'))
 			closeMenu();
-		// if (Interactions.Clicked(resumeButton) || Controls.justPressed('pause'))
-		// {
-		// 	closeMenu();
-		// }
-		// if (Interactions.Clicked(restartButton))
-		// {
-		// 	restartSong();
-		// }
-		// if (Interactions.Clicked(exitButton))
-		// {
-		// 	closeSong();
-		// }
 	}
 
 	private function closeMenu()
 	{
-		// FlxTween.cancelTweensOf(resumeButton);
-		// FlxTween.cancelTweensOf(restartButton);
-		// FlxTween.cancelTweensOf(exitButton);
-
-		// resumeButton.dissapear();
-		// restartButton.fade();
-		// exitButton.fade();
 		new FlxTimer().start(0.5, function(tmr)
 		{
 			close();
@@ -841,13 +766,6 @@ class PauseSubState extends FlxSubState
 
 	private function restartSong()
 	{
-		// FlxTween.cancelTweensOf(resumeButton);
-		// FlxTween.cancelTweensOf(restartButton);
-		// FlxTween.cancelTweensOf(exitButton);
-
-		// restartButton.dissapear();
-		// resumeButton.fade();
-		// exitButton.fade();
 		new FlxTimer().start(0.5, function(tmr)
 		{
 			FlxG.resetState();
@@ -856,13 +774,6 @@ class PauseSubState extends FlxSubState
 
 	private function closeSong()
 	{
-		// FlxTween.cancelTweensOf(resumeButton);
-		// FlxTween.cancelTweensOf(restartButton);
-		// FlxTween.cancelTweensOf(exitButton);
-
-		// exitButton.dissapear();
-		// restartButton.fade();
-		// resumeButton.fade();
 		new FlxTimer().start(0.5, function(tmr)
 		{
 			FlxG.switchState(new MenuState());
@@ -872,8 +783,6 @@ class PauseSubState extends FlxSubState
 
 class LostSubState extends FlxSubState
 {
-	// var restartButton:QButton;
-	// var exitButton:QButton;
 	var songData:Array<Dynamic>;
 
 	public function new(x:Float, y:Float, songData:Array<Dynamic>) // name, diff, misses, accuracy, score, hits, combo, mcombo
@@ -882,38 +791,19 @@ class LostSubState extends FlxSubState
 		this.songData = songData;
 
 		QMDiscordRPC.changePresence('Paused ${songData[0]} (${songData[1]})', 'Misses: ${songData[2]}, Acc: ${songData[3]}%');
-
-		// restartButton = new QButton(FlxG.width - FlxG.width / 4, FlxG.height / 2 - 128, 1, 'back');
-		// add(restartButton);
-		// add(restartButton.icon);
-		// restartButton.appear();
-
-		// exitButton = new QButton(FlxG.width - FlxG.width / 4, FlxG.height - 256, 1, 'exit');
-		// add(exitButton);
-		// add(exitButton.icon);
-		// exitButton.appear();
 	}
 
 	override function update(elapsed:Float)
 	{
 		super.update(elapsed);
-		// if (Interactions.Clicked(restartButton))
-		// {
-		// 	restartSong();
-		// }
-		// if (Interactions.Clicked(exitButton))
-		// {
-		// 	closeSong();
-		// }
+		if (FlxG.keys.justPressed.ENTER)
+			restartSong();
+		if (FlxG.keys.justPressed.ESCAPE)
+			closeSong();
 	}
 
 	private function restartSong()
 	{
-		// FlxTween.cancelTweensOf(restartButton);
-		// FlxTween.cancelTweensOf(exitButton);
-
-		// restartButton.dissapear();
-		// exitButton.fade();
 		new FlxTimer().start(0.5, function(tmr)
 		{
 			FlxG.resetState();
@@ -922,11 +812,6 @@ class LostSubState extends FlxSubState
 
 	private function closeSong()
 	{
-		// FlxTween.cancelTweensOf(restartButton);
-		// FlxTween.cancelTweensOf(exitButton);
-
-		// exitButton.dissapear();
-		// restartButton.fade();
 		new FlxTimer().start(0.5, function(tmr)
 		{
 			FlxG.switchState(new MenuState());
