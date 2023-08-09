@@ -1,0 +1,16 @@
+{
+    "Info": {
+        "Version": 1,
+        "Type": "SongPackage"
+    },
+    "Entries": [
+        {
+            "Name": "FILENAME00.EXT",
+            "Data": "INSERT_BASE64_ENCODED_DATA"
+        },
+        {
+            "Name": "FILENAME01.EXT",
+            "Data": "INSERT_BASE64_ENCODED_DATA"
+        }
+    ]
+}
