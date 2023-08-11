@@ -1,5 +1,7 @@
 package;
 
+import qui.QSoundTray;
+import flixel.FlxState;
 import SongSaveData.Scores;
 import states.CrashHandlerState;
 import openfl.events.Event;
@@ -21,6 +23,14 @@ using StringTools;
 
 class QMGame extends FlxGame
 {
+	public function new(gameWidth = 0, gameHeight = 0, ?initialState:Class<FlxState>, updateFramerate = 60, drawFramerate = 60, skipSplash = false,
+			startFullscreen = false)
+	{
+		super(gameWidth, gameHeight, initialState, updateFramerate, drawFramerate, skipSplash, startFullscreen);
+
+		_customSoundTray = QSoundTray;
+	}
+	
 	override function create(_:Event)
 	{
 		try

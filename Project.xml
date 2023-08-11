@@ -55,7 +55,7 @@
 	<!-- ______________________________ Haxedefines _____________________________ -->
 
 	<!-- For multiplayer testing, remove when done -->
-	<haxedef name="MULTIPLAYER_TEST" />
+	<!-- <haxedef name="MULTIPLAYER_TEST" /> -->
 
 	<!-- So crash screen works as intended -->
 	<haxedef name="HXCPP_STACK_TRACE" />
