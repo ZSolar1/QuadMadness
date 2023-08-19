@@ -49,48 +49,39 @@ class QLua
 			SongState.instance.strumTween(id, variable, value, duration, ease);
 		});
 
-		Lua_helper.add_callback(lua, "cameraFlash", function(color:String, duritation:Float){ //bruhh istg there is a better way to do this
-			if (color == "red" || color == "Red" || color == "RED")
-				FlxG.camera.flash(FlxColor.RED, duritation);
-
-			if (color == "orange" || color == "Orange" || color == "ORANGE")
-				FlxG.camera.flash(FlxColor.ORANGE, duritation);
-
-			if (color == "yellow" || color == "Yellow" || color == "YELLOW")
-				FlxG.camera.flash(FlxColor.YELLOW, duritation);
-
-			if (color == "green" || color == "Green" || color == "GREEN")
-				FlxG.camera.flash(FlxColor.GREEN, duritation);
-
-			if (color == "lime" || color == "Lime" || color == "LIME")
-				FlxG.camera.flash(FlxColor.LIME, duritation);
-
-			if (color == "cyan" || color == "Cyan" || color == "CYAN")
-				FlxG.camera.flash(FlxColor.CYAN, duritation);
-
-			if (color == "blue" || color == "Blue" || color == "BLUE")
-				FlxG.camera.flash(FlxColor.BLUE, duritation);
-
-			if (color == "purple" || color == "Purple" || color == "PURPLE")
-				FlxG.camera.flash(FlxColor.PURPLE, duritation);
-
-			if (color == "magenta" || color == "Magenta" || color == "MAGENTA")
-				FlxG.camera.flash(FlxColor.MAGENTA, duritation);
-
-			if (color == "pink" || color == "Pink" || color == "PINK")
-				FlxG.camera.flash(FlxColor.PINK, duritation);
-
-			if (color == "white" || color == "White" || color == "WHITE")
-				FlxG.camera.flash(FlxColor.WHITE, duritation);
-
-			if (color == "gray" || color == "Gray" || color == "GRAY")
-				FlxG.camera.flash(FlxColor.GRAY, duritation);
-
-			if (color == "brown" || color == "Brown" || color == "BROWN")
-				FlxG.camera.flash(FlxColor.BROWN, duritation);
-
-			if (color == "black" || color == "Black" || color == "BLACK")
-				FlxG.camera.flash(FlxColor.BLACK, duritation);
+		Lua_helper.add_callback(lua, "cameraFlash", function(color:String, duration:Float)
+		{
+			switch (color.toLowerCase())
+			{
+				case "red":
+					FlxG.camera.flash(FlxColor.RED, duration);
+				case "orange":
+					FlxG.camera.flash(FlxColor.ORANGE, duration);
+				case "yellow":
+					FlxG.camera.flash(FlxColor.YELLOW, duration);
+				case "green":
+					FlxG.camera.flash(FlxColor.GREEN, duration);
+				case "lime":
+					FlxG.camera.flash(FlxColor.LIME, duration);
+				case "cyan":
+					FlxG.camera.flash(FlxColor.CYAN, duration);
+				case "blue":
+					FlxG.camera.flash(FlxColor.BLUE, duration);
+				case "purple":
+					FlxG.camera.flash(FlxColor.PURPLE, duration);
+				case "magenta":
+					FlxG.camera.flash(FlxColor.MAGENTA, duration);
+				case "pink":
+					FlxG.camera.flash(FlxColor.PINK, duration);
+				case "white":
+					FlxG.camera.flash(FlxColor.WHITE, duration);
+				case "gray":
+					FlxG.camera.flash(FlxColor.GRAY, duration);
+				case "brown":
+					FlxG.camera.flash(FlxColor.BROWN, duration);
+				case "black":
+					FlxG.camera.flash(FlxColor.BLACK, duration);
+			}
 		});
 		call('create', []);
 	}
@@ -107,7 +98,7 @@ class QLua
 	}
 
 	static function typeToString(type:Int):String {
-		#if LUA_ALLOWED
+		#if cpp
 		switch(type) {
 			case Lua.LUA_TBOOLEAN: return "boolean";
 			case Lua.LUA_TNUMBER: return "number";
