@@ -10,13 +10,14 @@ import llua.LuaL;
 import llua.State;
 import llua.Convert;
 
-class QLua
+class QLua extends FlxState
 {
 	public static var lua:State = null;
 	public var scriptName:String = '';
 
-	public function new(script:String)
+	public function new(script:String, isMania:Bool)
 	{
+		super();
 		lua = LuaL.newstate();
 		LuaL.openlibs(lua);
 		Lua.init_callbacks(lua);
@@ -39,6 +40,8 @@ class QLua
 		}
 		scriptName = script;
 
+		if (!isMania)
+			{
 		set('scrollSpeed', Preferences.scrollSpeed);
 		set('downscroll', Preferences.downscroll);
 		set('curBeat', SongState.curBeat);
@@ -93,19 +96,23 @@ class QLua
 				FlxG.camera.flash(FlxColor.BLACK, duritation);
 		});
 		call('create', []);
+		}else{
+			trace("Mania charts don't have lua support yet!!");
+		}
 	}
 
-	/*public static function beatHit() fix one day.
+	/*public static function beatHit() I'll fix this one day.
 		{
 			call('beatHit', []);
 		}*/
 
-	static public function call(theFunction:String, theArguments:Array<Dynamic>):Dynamic { 
+	public function call(theFunction:String, theArguments:Array<Dynamic>):Dynamic { 
 		Lua.getglobal(lua, theFunction);
 		Lua.call(lua, theArguments.length, 1);
 		return 0;
 	}
 
+<<<<<<< Updated upstream
 	static function typeToString(type:Int):String {
 		#if LUA_ALLOWED
 		switch(type) {
@@ -120,6 +127,8 @@ class QLua
 		return "unknown";
 	}
 
+=======
+>>>>>>> Stashed changes
 	public function set(variable:String, data:Dynamic)
 	{
 		if (lua == null)
