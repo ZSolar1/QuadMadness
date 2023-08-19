@@ -32,10 +32,10 @@ import maps.FNF.Song;
 import maps.MapChart;
 import openfl.events.KeyboardEvent;
 import states.MenuState;
+import QLua;
 
 class SongState extends FlxState
 {
-	public static var instance:SongState;
 
 	public static var STRUM_X = 640 - 256;
 	public static var STRUM_Y = 16;
@@ -61,6 +61,8 @@ class SongState extends FlxState
 	var allNotes:Array<Note>;
 	var notes:FlxTypedGroup<Note>;
 
+	var dead:Bool = false;
+
 	var stats:FlxText;
 	var positionBar:FlxBar;
 	var healthBar:FlxBar;
@@ -84,8 +86,8 @@ class SongState extends FlxState
 
 	var music:openfl.media.Sound;
 
-	var curBeat:Int;
-	var curStep:Int;
+	public static var curBeat:Int;
+	public static var curStep:Int;
 
 	var beats:Float;
 	var steps:Float;
@@ -109,6 +111,11 @@ class SongState extends FlxState
 
 	// All of the debug stuff sits here
 	var debugText:FlxText;
+
+	//lua
+	public var lua:Array<QLua> = [];
+	public static var instance:SongState;
+	public var allLuas:Array<String>;
 
 	override function onResize(Width:Int, Height:Int)
 	{
@@ -134,6 +141,7 @@ class SongState extends FlxState
 	override public function create()
 	{
 		super.create();
+		allLuas = [];
 		STRUM_X = Math.floor(FlxG.width / 2 - 256);
 
 		instance = this;
@@ -232,6 +240,17 @@ class SongState extends FlxState
 		{
 			music = Sound.fromFile('mods/fnf/$songName/Inst.ogg');
 			voices = new FlxSound().loadEmbedded(Sound.fromFile('mods/fnf/$songName/Voices.ogg'), false);
+			if (QMAssets.exists('mods/fnf/$songName/lua'))
+			{
+				allLuas = QMAssets.readModDirectory('fnf/$songName/lua');
+				//trace(allLuas);
+				for (luas in allLuas)
+				{
+					if (StringTools.endsWith(luas, '.lua'))
+						lua.push(new QLua('mods/fnf/$songName/lua/$luas'));
+				}
+				
+			}
 		}
 		else if (songType == 'mania')
 		{
@@ -251,6 +270,7 @@ class SongState extends FlxState
 				resyncVocals();
 			FlxG.camera.zoom += 0.02;
 		}
+		//QLua.beatHit(); fix one day.
 	}
 
 	// I thought it would be harder
@@ -262,8 +282,11 @@ class SongState extends FlxState
 
 	private function updateHealthText()
 	{
-		healthText.y = FlxG.height - Math.round(health * 512) - (healthText.height / 2);
-		healthText.text = Std.string(Math.round(health * 100)) + '%';
+		if (!dead)
+		{
+			healthText.y = FlxG.height - Math.round(health * 512) - (healthText.height / 2);
+			healthText.text = Std.string(Math.round(health * 100)) + '%';
+		}
 	}
 
 	private function generateNotes()
@@ -462,7 +485,9 @@ class SongState extends FlxState
 
 	private function lose()
 	{
+		dead = true;
 		healthBar.percent = 0;
+		remove(healthText);
 		FlxG.sound.music.pause();
 		if (songType == 'fnf')
 			voices.pause();
@@ -552,6 +577,10 @@ class SongState extends FlxState
 			rankNum = 4;
 		else if (accuracy >= 100)
 			rankNum = 5;
+		
+		if (accuracy <= 0)
+			accuracy = 0;
+
 		if (prevRank != rankNum)
 		{
 			rank.animation.frameIndex = rankNum;

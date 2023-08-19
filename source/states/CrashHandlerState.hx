@@ -32,6 +32,8 @@ class CrashHandlerState extends FlxState
 	function constructCallStack():String
 	{
 		var callStackText:String = "";
+		if (callStack != null)
+			{
 		for (stackItem in callStack)
 		{
 			switch (stackItem)
@@ -44,6 +46,9 @@ class CrashHandlerState extends FlxState
 			Sys.println(stackItem);
 		}
 		return callStackText;
+	}else{
+		return "";
+	}
 	}
 
 	override function create()
@@ -80,8 +85,8 @@ class CrashHandlerState extends FlxState
 		if (callStackMessage.text == 'Call Stack:\n')
 		{
 			remove(callStackMessage);
-			errorMessage.x = 0;
-			errorMessage.fieldWidth = FlxG.width;
+			errorMessage.fieldWidth = 1000;
+			errorMessage.screenCenter(X);
 		}
 
 		new FlxTimer().start(1, function(tmr)
@@ -93,7 +98,12 @@ class CrashHandlerState extends FlxState
 				case 2:
 					FlxTween.tween(error, {y: 10, alpha: 1}, 1, {ease: FlxEase.cubeOut});
 				case 1:
+					if (errorMessage.fieldWidth != 1000)
+						{
 					FlxTween.tween(errorMessage, {y: FlxG.height / 2, alpha: 1}, 1, {ease: FlxEase.cubeOut});
+						}else{
+							FlxTween.tween(errorMessage, {y: (FlxG.height - errorMessage.height) / 2, alpha: 1}, 1, {ease: FlxEase.cubeOut});
+						}
 					FlxTween.tween(callStackMessage, {y: FlxG.height / 2 - callStackMessage.height / 2, alpha: 1}, 1, {ease: FlxEase.cubeOut});
 					FlxTween.tween(buttonMsg, {alpha: 1}, 1, {ease: FlxEase.cubeOut});
 			}

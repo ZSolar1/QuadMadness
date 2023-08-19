@@ -7,6 +7,7 @@ import states.CrashHandlerState;
 import openfl.events.Event;
 import haxe.CallStack;
 import lime.system.System;
+import flixel.util.FlxTimer;
 #if sys
 import sys.io.File;
 import sys.FileSystem;
@@ -23,6 +24,8 @@ using StringTools;
 
 class QMGame extends FlxGame
 {
+	var message:String;
+	var stack:CallStack;
 	public function new(gameWidth = 0, gameHeight = 0, ?initialState:Class<FlxState>, updateFramerate = 60, drawFramerate = 60, skipSplash = false,
 			startFullscreen = false)
 	{
@@ -33,6 +36,8 @@ class QMGame extends FlxGame
 	
 	override function create(_:Event)
 	{
+		message = "";
+		stack = null;
 		try
 		{
 			super.create(_);
@@ -40,7 +45,9 @@ class QMGame extends FlxGame
 		}
 		catch (e)
 		{
-			FlxG.switchState(new CrashHandlerState(e.message, e.stack));
+			new FlxTimer().start(1.0, crashHandler, 1);
+			message = e.message;
+			stack = e.stack;
 		}
 	}
 
@@ -52,7 +59,9 @@ class QMGame extends FlxGame
 		}
 		catch (e)
 		{
-			FlxG.switchState(new CrashHandlerState(e.message, e.stack));
+			new FlxTimer().start(1.0, crashHandler, 1);
+			message = e.message;
+			stack = e.stack;
 		}
 	}
 
@@ -64,10 +73,18 @@ class QMGame extends FlxGame
 		}
 		catch (e)
 		{
+			
+			new FlxTimer().start(1.0, crashHandler, 1);
+			message = e.message;
+			stack = e.stack;
 			trace('got a crash: ${e.message}');
-			FlxG.switchState(new CrashHandlerState(e.message, e.stack));
+			
 		}
 	}
+	function crashHandler(timer:FlxTimer):Void
+		{
+			FlxG.switchState(new CrashHandlerState(message, stack));
+		}
 }
 
 class Main extends Sprite
