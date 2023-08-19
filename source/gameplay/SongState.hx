@@ -257,18 +257,20 @@ class SongState extends FlxState
 			var allLuas:Array<String> = [];
 			switch (type.toLowerCase())
 			{
-				case "fnf":
-			if (QMAssets.exists('mods/fnf/$songName/lua'))
-				{
-					allLuas = QMAssets.readModDirectory('fnf/$songName/lua');
-					//trace(allLuas);
-					for (luas in allLuas)
+			case "fnf":
+				if (QMAssets.exists('mods/fnf/$songName/lua'))
 					{
-						if (StringTools.endsWith(luas, '.lua'))
-							theLuaArray.push(new QLua('mods/fnf/$songName/lua/$luas', false));
-						
+						allLuas = QMAssets.readModDirectory('fnf/$songName/lua');
+						//trace(allLuas);
+						for (luas in allLuas)
+						{
+							if (StringTools.endsWith(luas, '.lua'))
+								theLuaArray.push(new QLua('mods/fnf/$songName/lua/$luas', false));
+							
+						}
+					}else{
+						return [];
 					}
-				}
 			case "mania":
 				if (QMAssets.exists('mods/mania/$songName/lua'))
 					{
@@ -279,8 +281,11 @@ class SongState extends FlxState
 							if (StringTools.endsWith(luas, '.lua'))
 								theLuaArray.push(new QLua('mods/mania/$songName/lua/$luas', true));
 						}
+					}else{
+						return [];
 					}
 				}
+				if (theLuaAray != [])
 					return theLuaArray;
 		}
 
