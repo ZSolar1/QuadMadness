@@ -1,5 +1,6 @@
 package gameplay;
 
+import QHScript.QHscript;
 import skin.SkinLoader;
 import openfl.filters.BitmapFilterQuality;
 import openfl.filters.BlurFilter;
@@ -32,7 +33,9 @@ import maps.FNF.Song;
 import maps.MapChart;
 import openfl.events.KeyboardEvent;
 import states.MenuState;
-import QLua;
+import hscript.Expr;
+import hscript.Parser;
+import hscript.Interp;
 
 class SongState extends FlxState
 {
@@ -112,8 +115,8 @@ class SongState extends FlxState
 	// All of the debug stuff sits here
 	var debugText:FlxText;
 
-	//lua
-	public static var lua:Array<QLua> = [];
+	//HScript stuff
+	public static var hxLoaded:Bool = false;
 	public static var instance:SongState;
 	//public var allLuas:Array<String>;
 
@@ -245,49 +248,15 @@ class SongState extends FlxState
 			trace('mods/mania/$songName/${chart.additionalData[0]}');
 			music = Sound.fromFile('mods/mania/$songName/${chart.additionalData[0]}');
 		}
-		lua = loadModdedLua(songName, songType);
-		callLuas('postCreate', []);
+		
+		QHscript.loadModdedHScript(songName, songType);
+		hxLoaded = true;
+		QHscript.callHscript('create', []); //line 254, in the create() function.
+		
+		
 		startCountdown();
 		trace('Started Countdown');
 	}
-
-	public static function loadModdedLua(theSong:String, type:String)
-		{
-			var theLuaArray:Array<QLua> = [];
-			var allLuas:Array<String> = [];
-			switch (type.toLowerCase())
-			{
-			case "fnf":
-				if (QMAssets.exists('mods/fnf/$songName/lua'))
-					{
-						allLuas = QMAssets.readModDirectory('fnf/$songName/lua');
-						//trace(allLuas);
-						for (luas in allLuas)
-						{
-							if (StringTools.endsWith(luas, '.lua'))
-								theLuaArray.push(new QLua('mods/fnf/$songName/lua/$luas', false));
-							
-						}
-					}else{
-						return [];
-					}
-			case "mania":
-				if (QMAssets.exists('mods/mania/$songName/lua'))
-					{
-						allLuas = QMAssets.readModDirectory('mania/$songName/lua');
-						//trace(allLuas);
-						for (luas in allLuas)
-						{
-							if (StringTools.endsWith(luas, '.lua'))
-								theLuaArray.push(new QLua('mods/mania/$songName/lua/$luas', true));
-						}
-					}else{
-						return [];
-					}
-				}
-				if (theLuaAray != [])
-					return theLuaArray;
-		}
 
 	// Finally added beats and steps
 	private function beatHit()
@@ -298,7 +267,8 @@ class SongState extends FlxState
 				resyncVocals();
 			FlxG.camera.zoom += 0.02;
 		}
-		callLuas('beatHit', []);
+		if (hxLoaded)
+			QHscript.callHscript('beatHit', []);
 	}
 
 	// I thought it would be harder
@@ -306,6 +276,9 @@ class SongState extends FlxState
 	{
 		if (curStep % 4 == 0)
 			beatHit();
+
+		if (hxLoaded)
+			QHscript.callHscript('stepHit', []);
 	}
 
 	private function updateHealthText()
@@ -354,6 +327,8 @@ class SongState extends FlxState
 
 	private function startCountdown()
 	{
+		if (hxLoaded)
+			QHscript.callHscript('countdownStarted', []);
 		new FlxTimer().start(crochet / 1000, function(tmr:FlxTimer)
 		{
 			if (tmr.loopsLeft > 0)
@@ -396,11 +371,12 @@ class SongState extends FlxState
 				startSong();
 			}
 		}, 4);
-		callLuas('countdownStarted', []);
 	}
 
 	private function startSong():Void
 	{
+		if (hxLoaded)
+			QHscript.callHscript('songStarted', []);
 		generateNotes();
 		trace('Generated Notes');
 		if (songType == 'fnf')
@@ -418,6 +394,7 @@ class SongState extends FlxState
 		}
 		startedSong = true;
 		trace('Started Song');
+		
 	}
 
 	private function createParticle(x:Float, y:Float)
@@ -513,6 +490,7 @@ class SongState extends FlxState
 
 	private function lose()
 	{
+		
 		dead = true;
 		healthBar.percent = 0;
 		remove(healthText);
@@ -541,10 +519,15 @@ class SongState extends FlxState
 		{
 			openSubState(new LostSubState(0, 0, [formattedName, formattedDiff, misses, accuracy, score, totalHit, combo, maxCombo]));
 		});
+		if (hxLoaded)
+			QHscript.callHscript('gameOver', []);
 	}
 
 	private function hitNote(note:Note)
 	{
+		if (hxLoaded)
+			QHscript.callHscript('noteHit', []);
+
 		var judge = calculateJudgement(note);
 		createParticle(strums.members[note.direction].x, strums.members[note.direction].y);
 		if (note.isSustain)
@@ -575,6 +558,9 @@ class SongState extends FlxState
 
 	private function missNote(note:Note)
 	{
+		if (hxLoaded)
+			QHscript.callHscript('noteMissed', []);
+
 		totalNotes += 1;
 		hitRating -= 1;
 		note.kill();
@@ -588,16 +574,6 @@ class SongState extends FlxState
 		updateScore();
 		new FlxSound().loadEmbedded(Sound.fromFile('assets/sounds/miss.ogg'), false).play(true);
 	}
-
-	public function callLuas(theFunction:String, arguments:Array<Dynamic>)
-		{
-			if (lua != [])
-			{
-				for (i in lua) {
-					i.call(theFunction, arguments); //fix one day.
-				}
-			}
-		}
 
 	var prevRank = 0;
 	private function updateScore()
@@ -678,6 +654,8 @@ class SongState extends FlxState
 
 	private function endSong()
 	{
+		if (hxLoaded)
+			QHscript.callHscript('songEnded', []);
 		Scores.saveSong(songName, songDiff, {
 			accuracy: accuracy,
 			misses: misses,
@@ -739,8 +717,6 @@ class SongState extends FlxState
 	override function update(elapsed:Float)
 	{
 		super.update(elapsed);
-		if (lua != [])
-			callLuas('update', [elapsed]);
 
 		var prevHealth = health;
 		var prevStep = curStep;
@@ -778,6 +754,8 @@ class SongState extends FlxState
 			if (Globals.debugMode)
 				debugText.text = 'Steps: $steps\nBeats: $beats';
 		}
+		if (hxLoaded)
+			QHscript.callHscript('update', [elapsed]);
 	}
 
 	private inline function resyncVocals()
