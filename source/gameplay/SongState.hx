@@ -1,6 +1,5 @@
 package gameplay;
 
-import QHScript.QHscript;
 import skin.SkinLoader;
 import openfl.filters.BitmapFilterQuality;
 import openfl.filters.BlurFilter;
@@ -115,10 +114,7 @@ class SongState extends FlxState
 	// All of the debug stuff sits here
 	var debugText:FlxText;
 
-	//HScript stuff
-	public static var hxLoaded:Bool = false;
 	public static var instance:SongState;
-	//public var allLuas:Array<String>;
 
 	override function onResize(Width:Int, Height:Int)
 	{
@@ -248,12 +244,7 @@ class SongState extends FlxState
 			trace('mods/mania/$songName/${chart.additionalData[0]}');
 			music = Sound.fromFile('mods/mania/$songName/${chart.additionalData[0]}');
 		}
-		
-		QHscript.loadModdedHScript(songName, songType);
-		hxLoaded = true;
-		QHscript.callHscript('create', []); //line 254, in the create() function.
-		
-		
+
 		startCountdown();
 		trace('Started Countdown');
 	}
@@ -267,8 +258,6 @@ class SongState extends FlxState
 				resyncVocals();
 			FlxG.camera.zoom += 0.02;
 		}
-		if (hxLoaded)
-			QHscript.callHscript('beatHit', []);
 	}
 
 	// I thought it would be harder
@@ -276,9 +265,6 @@ class SongState extends FlxState
 	{
 		if (curStep % 4 == 0)
 			beatHit();
-
-		if (hxLoaded)
-			QHscript.callHscript('stepHit', []);
 	}
 
 	private function updateHealthText()
@@ -327,8 +313,6 @@ class SongState extends FlxState
 
 	private function startCountdown()
 	{
-		if (hxLoaded)
-			QHscript.callHscript('countdownStarted', []);
 		new FlxTimer().start(crochet / 1000, function(tmr:FlxTimer)
 		{
 			if (tmr.loopsLeft > 0)
@@ -375,8 +359,6 @@ class SongState extends FlxState
 
 	private function startSong():Void
 	{
-		if (hxLoaded)
-			QHscript.callHscript('songStarted', []);
 		generateNotes();
 		trace('Generated Notes');
 		if (songType == 'fnf')
@@ -519,15 +501,10 @@ class SongState extends FlxState
 		{
 			openSubState(new LostSubState(0, 0, [formattedName, formattedDiff, misses, accuracy, score, totalHit, combo, maxCombo]));
 		});
-		if (hxLoaded)
-			QHscript.callHscript('gameOver', []);
 	}
 
 	private function hitNote(note:Note)
 	{
-		if (hxLoaded)
-			QHscript.callHscript('noteHit', []);
-
 		var judge = calculateJudgement(note);
 		createParticle(strums.members[note.direction].x, strums.members[note.direction].y);
 		if (note.isSustain)
@@ -558,9 +535,6 @@ class SongState extends FlxState
 
 	private function missNote(note:Note)
 	{
-		if (hxLoaded)
-			QHscript.callHscript('noteMissed', []);
-
 		totalNotes += 1;
 		hitRating -= 1;
 		note.kill();
@@ -654,8 +628,6 @@ class SongState extends FlxState
 
 	private function endSong()
 	{
-		if (hxLoaded)
-			QHscript.callHscript('songEnded', []);
 		Scores.saveSong(songName, songDiff, {
 			accuracy: accuracy,
 			misses: misses,
@@ -754,8 +726,6 @@ class SongState extends FlxState
 			if (Globals.debugMode)
 				debugText.text = 'Steps: $steps\nBeats: $beats';
 		}
-		if (hxLoaded)
-			QHscript.callHscript('update', [elapsed]);
 	}
 
 	private inline function resyncVocals()
@@ -801,6 +771,8 @@ class PauseSubState extends FlxSubState
 		super.update(elapsed);
 		if (Controls.justPressed('pause'))
 			closeMenu();
+		if (FlxG.keys.justPressed.BACKSPACE)
+			closeSong();
 	}
 
 	private function closeMenu()
