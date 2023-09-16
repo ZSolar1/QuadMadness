@@ -102,7 +102,7 @@ class SongSelectState extends FlxState
 		{
 			box.listed = false;
 		}
-		FlxTween.tween(pickedBox, {x: 50, y: 40}, 1, {ease: FlxEase.cubeOut});
+		FlxTween.tween(pickedBox, {x: 10, y: 40}, 1, {ease: FlxEase.cubeOut});
 		FlxTween.tween(songBoxes, {x: FlxG.width + 524}, 1, {
 			ease: FlxEase.cubeInOut,
 			onComplete: function(twn)
