@@ -12,7 +12,6 @@ import QMAssets.QMAssets;
 import flixel.FlxG;
 import flixel.FlxState;
 import flixel.text.FlxText;
-import gameplay.SongState;
 
 class OsuSongSelectState extends FlxState
 {

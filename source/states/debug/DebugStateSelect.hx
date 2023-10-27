@@ -3,7 +3,6 @@ package states.debug;
 import states.songselect.OsuSongSelectState;
 import states.songselect.SongSelectState;
 import options.OptionsState;
-import gameplay.SongState;
 import states.options.AudioState;
 import states.options.VisualState;
 import flixel.FlxG;

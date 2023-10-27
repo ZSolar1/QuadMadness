@@ -1,16 +1,10 @@
-package gameplay;
+package states;
 
 import lime.media.openal.ALFilter;
 import lime.media.openal.AL;
 import skin.SkinLoader;
-import openfl.filters.BitmapFilterQuality;
-import openfl.filters.BlurFilter;
-import openfl.filters.BitmapFilter;
 import flixel.util.FlxStringUtil;
 import maps.OsuParser;
-import flixel.system.ui.FlxSoundTray;
-import hscript.Interp;
-import flixel.FlxCamera;
 import flixel.util.FlxTimer;
 import QMAssets.QMAssets;
 import SongSaveData.Scores;
@@ -28,15 +22,15 @@ import flixel.tweens.FlxEase;
 import flixel.tweens.FlxTween;
 import flixel.ui.FlxBar;
 import flixel.util.FlxColor;
-import flixel.util.FlxSort;
 import maps.Convert;
 import maps.FNF.Song;
 import maps.MapChart;
 import openfl.events.KeyboardEvent;
 import states.MenuState;
-import hscript.Expr;
-import hscript.Parser;
-import hscript.Interp;
+import gameplay.Conductor;
+import gameplay.Note;
+import gameplay.NoteParticle;
+import gameplay.StrumNote;
 
 class SongState extends FlxState
 {
@@ -413,12 +407,12 @@ class SongState extends FlxState
 				score = 100;
 				rating = 0.5;
 			}
-			else if (QMath.isBetween(diff, Conductor.hitFrame * 0.45, Conductor.hitFrame * 0.75, false))
+			else if (QMath.isBetween(diff, Conductor.hitFrame * 0.35, Conductor.hitFrame * 0.75, false))
 			{
 				score = 200;
 				rating = 0.75;
 			}
-			else if (QMath.isBetween(diff, 0, Conductor.hitFrame * 0.45, true))
+			else if (QMath.isBetween(diff, 0, Conductor.hitFrame * 0.35, true))
 			{
 				score = 350;
 				rating = 1;
