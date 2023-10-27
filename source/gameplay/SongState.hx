@@ -1,5 +1,7 @@
 package gameplay;
 
+import lime.media.openal.ALFilter;
+import lime.media.openal.AL;
 import skin.SkinLoader;
 import openfl.filters.BitmapFilterQuality;
 import openfl.filters.BlurFilter;
@@ -87,6 +89,7 @@ class SongState extends FlxState
 	var voices:FlxSound;
 
 	var music:openfl.media.Sound;
+	var filter:ALFilter;
 
 	public static var curBeat:Int;
 	public static var curStep:Int;
@@ -105,7 +108,7 @@ class SongState extends FlxState
 	var score:Int = 0;
 	var combo:Int = 0;
 	var maxCombo:Int = 0;
-	var health:Float = 0.5;
+	var health:Float = 1;
 
 	var controlPressed:Array<Bool> = [false, false, false, false];
 	var controlHold:Array<Bool> = [false, false, false, false];
@@ -366,6 +369,18 @@ class SongState extends FlxState
 			FlxG.sound.playMusic(music, 1, false);
 			FlxG.sound.list.add(voices);
 			voices.play(true, 0.0);
+			@:privateAccess var buf = FlxG.sound.music._sound.__buffer.__srcBuffer;
+			filter = AL.createFilter();
+			AL.filteri(filter, AL.FILTER_TYPE, AL.FILTER_LOWPASS);
+			AL.filterf(filter, AL.LOWPASS_GAIN, 0.8);
+			AL.filterf(filter, AL.LOWPASS_GAINHF, 0);
+			AL.sourcei(buf, AL.DIRECT_FILTER, filter);
+			if (songType == 'fnf')
+			{
+				@:privateAccess var vbuf = voices._sound.__buffer.__srcBuffer;
+				AL.sourcei(vbuf, AL.DIRECT_FILTER, filter);
+			}
+
 			FlxG.sound.music.onComplete = endSong;
 
 		}
@@ -465,6 +480,14 @@ class SongState extends FlxState
 	private function changeHealth(amount:Float)
 	{
 		health = FlxMath.bound(health + amount, 0, 1);
+		@:privateAccess var buf = FlxG.sound.music._sound.__buffer.__srcBuffer;
+		AL.filterf(filter, AL.LOWPASS_GAINHF, FlxMath.bound(health * 2, 0, 1));
+		AL.sourcei(buf, AL.DIRECT_FILTER, filter);
+		if (songType == 'fnf')
+		{
+			@:privateAccess var vbuf = voices._sound.__buffer.__srcBuffer;
+			AL.sourcei(vbuf, AL.DIRECT_FILTER, filter);
+		}
 		updateHealthText();
 		if (health == 0)
 			lose();
@@ -617,11 +640,27 @@ class SongState extends FlxState
 			note.late = true;
 
 		var center:Float = STRUM_Y + 128 / 2;
-		if (controlHold[note.direction] && note.isSustain && note.canBeHit && !note.sustainLocked)
+		// if (controlHold[note.direction] && note.isSustain && note.canBeHit && !note.sustainLocked)
+		// {
+		// 	if (note.strumTime - songPos < 0 && note.isSustainEnd)
+		// 		hitNote(note);
+		// 	if ((note.strumTime + note.sustainParent.sustainLength) - songPos < 0 && !note.isSustainEnd)
+		// 		hitNote(note);
+		// }
+		if (controlHold[note.direction] && note.isSustain && note.canBeHit)
 		{
-			if (note.strumTime - songPos < 0 && note.isSustainEnd)
-				hitNote(note);
-			if ((note.strumTime + note.sustainParent.sustainLength) - songPos < 0 && !note.isSustainEnd)
+			// (40     - 0             * 3            + 128         >= 72)
+			if (note.y - note.offset.y * note.scale.y + note.height >= center)
+			{
+				if (note.y < STRUM_Y + 64)
+					note.y = STRUM_Y + 64;
+				var sustainRect = new FlxRect(0, STRUM_Y + note.height / 2 - note.y, note.width * 2, note.height * 2);
+				sustainRect.y /= note.scale.y;
+				sustainRect.height -= sustainRect.y;
+				sustainRect.height += 20;
+				note.clipRect = sustainRect;
+			}
+			if (note.strumTime - songPos < 0)
 				hitNote(note);
 		}
 	}

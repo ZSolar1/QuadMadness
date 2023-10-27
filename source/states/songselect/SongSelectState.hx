@@ -80,6 +80,7 @@ class SongSelectState extends FlxState
 
 	private function fillDiffs()
 	{
+		songDiffList = [];
 		songDiffList = QMAssets.FNFreadAllDiffs(songNameList[curSelected]);
 		var i = 0;
 		for (sd in songDiffList)
