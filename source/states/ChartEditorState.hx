@@ -6,7 +6,7 @@ import gameplay.NoteParticle;
 import gameplay.Note;
 import flixel.math.FlxMath;
 import flixel.util.FlxStringUtil;
-import flixel.system.FlxSound;
+import flixel.sound.FlxSound;
 import flixel.text.FlxText;
 import flixel.util.FlxColor;
 import flixel.FlxSprite;
