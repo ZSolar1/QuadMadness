@@ -186,6 +186,20 @@ class QMAssets
 	}
 
 	/**
+		Read a chart from 'mods' folder
+	**/
+	public static function readBinaryModChart(game:String, song:String)
+	{
+		#if sys
+		trace('Reading a binary file from ${createModFilePath(game, song)}');
+		return sys.io.File.getBytes(createModFilePath(game, song));
+		#else
+		trace('File reading cancelled, client is not on sys-compatible platform.');
+		return null;
+		#end
+	}
+
+	/**
 		Write a file to 'assets/'
 	**/
 	public static function write(path:String, type:String, content:String)
@@ -206,6 +220,20 @@ class QMAssets
 	{
 		#if sys
 		sys.io.File.saveBytes(createModFilePath('charts', '$name/$diff'), Bytes.ofString(content));
+		trace('Writing a file to ${createModFilePath('charts', '$name/$diff')}');
+		#else
+		trace('File writing cancelled, client is not on sys-compatible platform.');
+		return null;
+		#end
+	}
+
+	/**
+		Write a file to 'mods/charts/'
+	**/
+	public static function writeHexChart(name:String, diff:String, content:String)
+	{
+		#if sys
+		sys.io.File.saveBytes(createModFilePath('charts', '$name/$diff'), Bytes.ofHex(content));
 		trace('Writing a file to ${createModFilePath('charts', '$name/$diff')}');
 		#else
 		trace('File writing cancelled, client is not on sys-compatible platform.');

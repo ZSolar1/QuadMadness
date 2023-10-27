@@ -195,6 +195,14 @@ class SongSelectState extends FlxState
 				FlxG.switchState(new MenuState());
 			});
 		}
+		if (FlxG.keys.justPressed.F7)
+		{
+			MapPackager.packageSong('fnf', songNameList[curSelected]);
+		}
+		if (FlxG.keys.justPressed.F8)
+		{
+			MapPackager.extractSong(songNameList[curSelected]);
+		}
 		songBoxes.y = FlxMath.lerp(prevSongBoxY, -(curSelected * 152 - (152 * 2)) + (Math.abs(FlxG.height - 720) / 2), 0.02);
 	}
 }

@@ -1,5 +1,7 @@
 package qmp;
 
+import haxe.io.Bytes;
+
 enum QMPackageVersion
 {
 	VERSION_FIRST;

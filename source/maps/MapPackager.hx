@@ -1,5 +1,6 @@
 package maps;
 
+import haxe.io.Bytes;
 import qmp.QMPackage;
 
 class MapPackager
@@ -33,13 +34,13 @@ class MapPackager
 
 		for (filename in files)
 		{
-			var file = QMAssets.readModChart(game, '$song/$filename');
+			var file = QMAssets.readBinaryModChart(game, '$song/$filename');
 			var entry:QMPackageEntry = {
 				Name: "",
 				Data: "",
 			};
 			entry.Name = filename;
-			entry.Data = file;
+			entry.Data = file.toHex();
 			songPackage.Entries.push(entry);
 		}
 
@@ -57,7 +58,7 @@ class MapPackager
 		QMAssets.makeDirectory('mods/charts/$song');
 		for (file in songPackage.Entries)
 		{
-			QMAssets.writeChart(song, file.Name, file.Data);
+			QMAssets.writeHexChart(song, file.Name, file.Data);
 		}
 	}
 }
