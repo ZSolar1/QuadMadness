@@ -1,5 +1,6 @@
 package states.songselect;
 
+import states.SongState.SongType;
 import maps.MapPackager;
 import flixel.tweens.FlxEase;
 import flixel.tweens.FlxTween;
@@ -148,7 +149,7 @@ class OsuSongSelectState extends FlxState
 					trace('SelectedN: $curSelected, Diff: $selectedDiff');
 					SongState.songName = selectedSong;
 					SongState.songDiff = selectedDiff;
-					SongState.songType = 'mania';
+					SongState.songType = SongType.OsuMania;
 					var songState:SongState = new SongState();
 					FlxG.switchState(songState);
 				}

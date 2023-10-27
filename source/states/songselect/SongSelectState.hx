@@ -1,5 +1,6 @@
 package states.songselect;
 
+import states.SongState.SongType;
 import skin.SkinLoader;
 import maps.MapPackager;
 import flixel.tweens.FlxEase;
@@ -172,7 +173,7 @@ class SongSelectState extends FlxState
 					trace('SelectedN: $curSelected, Diff: $selectedDiff');
 					SongState.songName = selectedSong;
 					SongState.songDiff = selectedDiff;
-					SongState.songType = 'fnf';
+					SongState.songType = SongType.FridayNightFunkin;
 					var songState:SongState = new SongState();
 					FlxG.switchState(songState);
 				}

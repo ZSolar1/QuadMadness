@@ -16,7 +16,7 @@ import flixel.FlxSubState;
 import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.math.FlxMath;
 import flixel.math.FlxRect;
-import flixel.system.FlxSound;
+import flixel.sound.FlxSound;
 import flixel.text.FlxText;
 import flixel.tweens.FlxEase;
 import flixel.tweens.FlxTween;
@@ -32,6 +32,14 @@ import gameplay.Note;
 import gameplay.NoteParticle;
 import gameplay.StrumNote;
 
+enum SongType
+{
+	OsuMania;
+	FridayNightFunkin;
+	QuadMadness;
+	ProjectDiva; // unsure
+}
+
 class SongState extends FlxState
 {
 
@@ -40,7 +48,7 @@ class SongState extends FlxState
 	public static var STRUM_SIZE = 16;
 	public static var songName:String = '';
 	public static var songDiff:String = '';
-	public static var songType:String = 'mania';
+	public static var songType:SongType = SongType.OsuMania;
 
 	var formattedName:String = '';
 	var formattedDiff:String = '';
@@ -140,7 +148,7 @@ class SongState extends FlxState
 		STRUM_X = Math.floor(FlxG.width / 2 - 256);
 
 		instance = this;
-		if (songType == 'fnf')
+		if (songType == SongType.FridayNightFunkin)
 		{
 			formattedName = FlxStringUtil.toTitleCase(StringTools.replace(songName, '-', ' '));
 			formattedDiff = FlxStringUtil.toTitleCase(StringTools.replace(songDiff, '-', ' '));
@@ -199,14 +207,14 @@ class SongState extends FlxState
 		else
 			STRUM_Y = 16;
 		trace('Ready to load song');
-		if (songType == 'fnf')
+		if (songType == SongType.FridayNightFunkin)
 		{
 			if (songDiff == 'normal' && !QMAssets.exists('mods/fnf/$songName/$songName-normal.json'))
 				chart = Convert.FNF(Song.loadFromJson('$songName.json', songName));
 			else
 				chart = Convert.FNF(Song.loadFromJson('$songName-$songDiff.json', songName));
 		}
-		else if (songType == 'mania')
+		else if (songType == SongType.OsuMania)
 		{
 			chart = Convert.OsuMania(OsuParser.parseMap(songName, songDiff));
 			trace('Loaded an osu!mania map');
@@ -231,12 +239,12 @@ class SongState extends FlxState
 			strums.add(strum);
 		}
 		add(strums);
-		if (songType == 'fnf')
+		if (songType == SongType.FridayNightFunkin)
 		{
 			music = Sound.fromFile('mods/fnf/$songName/Inst.ogg');
 			voices = new FlxSound().loadEmbedded(Sound.fromFile('mods/fnf/$songName/Voices.ogg'), false);
 		}
-		else if (songType == 'mania')
+		else if (songType == SongType.OsuMania)
 		{
 			trace('mods/mania/$songName/${chart.additionalData[0]}');
 			music = Sound.fromFile('mods/mania/$songName/${chart.additionalData[0]}');
@@ -251,7 +259,7 @@ class SongState extends FlxState
 	{
 		if (curBeat % 4 == 0)
 		{
-			if (songType == 'fnf')
+			if (songType == SongType.FridayNightFunkin)
 				resyncVocals();
 			FlxG.camera.zoom += 0.02;
 		}
@@ -358,7 +366,7 @@ class SongState extends FlxState
 	{
 		generateNotes();
 		trace('Generated Notes');
-		if (songType == 'fnf')
+		if (songType == SongType.FridayNightFunkin)
 		{
 			FlxG.sound.playMusic(music, 1, false);
 			FlxG.sound.list.add(voices);
@@ -369,7 +377,7 @@ class SongState extends FlxState
 			AL.filterf(filter, AL.LOWPASS_GAIN, 0.8);
 			AL.filterf(filter, AL.LOWPASS_GAINHF, 0);
 			AL.sourcei(buf, AL.DIRECT_FILTER, filter);
-			if (songType == 'fnf')
+			if (songType == SongType.FridayNightFunkin)
 			{
 				@:privateAccess var vbuf = voices._sound.__buffer.__srcBuffer;
 				AL.sourcei(vbuf, AL.DIRECT_FILTER, filter);
@@ -378,7 +386,7 @@ class SongState extends FlxState
 			FlxG.sound.music.onComplete = endSong;
 
 		}
-		else if (songType == 'mania')
+		else if (songType == SongType.OsuMania)
 		{
 			FlxG.sound.playMusic(music, 1, false);
 			FlxG.sound.music.onComplete = endSong;
@@ -477,7 +485,7 @@ class SongState extends FlxState
 		@:privateAccess var buf = FlxG.sound.music._sound.__buffer.__srcBuffer;
 		AL.filterf(filter, AL.LOWPASS_GAINHF, FlxMath.bound(health * 2, 0, 1));
 		AL.sourcei(buf, AL.DIRECT_FILTER, filter);
-		if (songType == 'fnf')
+		if (songType == SongType.FridayNightFunkin)
 		{
 			@:privateAccess var vbuf = voices._sound.__buffer.__srcBuffer;
 			AL.sourcei(vbuf, AL.DIRECT_FILTER, filter);
@@ -494,7 +502,7 @@ class SongState extends FlxState
 		healthBar.percent = 0;
 		remove(healthText);
 		FlxG.sound.music.pause();
-		if (songType == 'fnf')
+		if (songType == SongType.FridayNightFunkin)
 			voices.pause();
 		startedSong = false;
 		FlxTween.tween(healthBar, {angle: 5, y: 2000}, 2, {ease: FlxEase.quadIn});
@@ -703,7 +711,7 @@ class SongState extends FlxState
 			if (Controls.justPressed('pause'))
 			{
 				FlxG.sound.music.pause();
-				if (songType == 'fnf')
+				if (songType == SongType.FridayNightFunkin)
 					voices.pause();
 				var pss = new PauseSubState(0, 0, [formattedName, formattedDiff, misses, accuracy]);
 				openSubState(pss);
@@ -771,7 +779,7 @@ class SongState extends FlxState
 		super.closeSubState();
 		subState.destroy();
 		FlxG.sound.music.resume();
-		if (songType == 'fnf')
+		if (songType == SongType.FridayNightFunkin)
 		{
 			voices.resume();
 			resyncVocals();
