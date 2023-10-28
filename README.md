@@ -15,12 +15,12 @@ After getting inspired by FNF and it's engine, I decided to try making a rhythm 
 - Chart Editor (WIP)
 - Discord RPC
 - Song Saving (useless, for now)
+- Support for native packaging format
 
 ## Planned features
 
 - Scripting to allow for modcharting
 - Full osu!mania support
-- Support for native packaging format
 - Fully working options menu
 - Project DIVA charts? (unsure)
 - Android version?
