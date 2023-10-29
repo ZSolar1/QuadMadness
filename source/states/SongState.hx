@@ -785,12 +785,6 @@ class SongState extends FlxState
 			resyncVocals();
 		}
 	}
-
-	// Lua stuff
-	public function strumTween(id:Int, variable:String, value:Dynamic, duration:Float, ease:String):Void
-	{
-		FlxTween.tween(strums.members[id + 1], {variable: value}, duration, {ease: QMath.easeFromString(ease)});
-	}
 }
 
 class PauseSubState extends FlxSubState

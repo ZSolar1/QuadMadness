@@ -13,24 +13,32 @@ import flixel.FlxSprite;
 import skin.SkinLoader;
 import flixel.FlxState;
 
+enum OptionCategories
+{
+	Visuals;
+	Gameplay;
+	Input;
+	Audio;
+}
+
 class OptionsState extends FlxState
 {
+	var category:OptionCategories;
 	var background:FlxSprite;
-	var tipPanel:FlxSprite;
 	var optionsStack:OptionsStack;
 	var curSelected:Int = 0;
 
-	var options:Map<String, Array<Option>> = [
-		"visuals" => [
+	var options:Map<OptionCategories, Array<Option>> = [
+		OptionCategories.Visuals => [
 			new Option('Windowed', 'Is the game running in windowed mode', 'windowed'),
 			new Option('Skin', 'The skin the game will use', 'skin', 'string'),
 		],
-		"gameplay" => [
+		OptionCategories.Gameplay => [
 			new Option('Scroll Speed', 'How fast the notes are going', 'scrollSpeed', 'float'),
 			new Option('Visual Offset', 'Delay between real notes and their visual representation\n(Higher - later)', 'visualOffset', 'float'),
 			new Option('Downscroll', 'Are the notes going down?', 'downscroll'),
 		],
-		"input" => [
+		OptionCategories.Input => [
 			new Option('', '', ''),
 			new Option('', '', ''),
 			new Option('', '', ''),
@@ -38,7 +46,7 @@ class OptionsState extends FlxState
 			new Option('', '', ''),
 			new Option('', '', ''),
 		],
-		"sound" => [
+		OptionCategories.Audio => [
 			new Option('Master Volume', 'How loud is the entire game?', 'masterVolume', 'int'),
 			new Option('Audio Volume', 'How loud are the sounds?', 'audioVolume', 'int'),
 			new Option('Music Volume', 'How loud are the songs?', 'musicVolume', 'int'),
@@ -56,10 +64,7 @@ class OptionsState extends FlxState
 	{
 		background.setGraphicSize(FlxG.width, FlxG.height);
 		background.updateHitbox();
-
-		tipPanel.setGraphicSize(FlxG.width, Math.floor(tipPanel.height));
-		tipPanel.y = FlxG.height - tipPanel.height;
-		tipPanel.updateHitbox();
+		optionsStack.y = FlxG.height / 2;
 	}
 
 	override public function create():Void
@@ -70,17 +75,33 @@ class OptionsState extends FlxState
 		background.loadGraphic(SkinLoader.getSkinnedImage('menu/background.png'));
 		add(background);
 
-		tipPanel = new FlxSprite(0, FlxG.height);
-		tipPanel.loadGraphic(SkinLoader.getSkinnedImage('menu/tip-menu.png'));
-		tipPanel.antialiasing = true;
-
 		optionsStack = new OptionsStack(FlxG.width / 2, 0, 48);
+		optionsStack.y = FlxG.height / 2;
+		optionsStack.margin = 96;
 		add(optionsStack);
 
-		add(tipPanel);
 		resizeSprites();
+	}
 
-		FlxTween.tween(tipPanel, {y: FlxG.height - tipPanel.height}, 1.0, {ease: FlxEase.cubeOut});
+	function changeBoxes(category:OptionCategories)
+	{
+		optionsStack.clear();
+		for (option in options.get(category))
+			optionsStack.add(new OptionsBox(option.name, option.type));
+		curSelected = 0;
+		updateSelection();
+	}
+	function updateSelection()
+	{
+		for (i in 0...optionsStack.members.length)
+		{
+			if (i != curSelected)
+			{
+				FlxTween.cancelTweensOf(optionsStack.members[i]);
+				FlxTween.tween(optionsStack.members[i], {x: FlxG.width / 2 + 256}, 0.35, {ease: FlxEase.quadOut});
+			}
+		}
+		FlxTween.tween(optionsStack.members[curSelected], {x: FlxG.width / 2}, 0.35, {ease: FlxEase.quadOut});
 	}
 
 	override public function update(elapsed:Float):Void
@@ -89,51 +110,25 @@ class OptionsState extends FlxState
 
 		optionsStack.y = FlxMath.lerp(optionsStack.y, -(curSelected * 152) + 152, 0.02);
 		if (FlxG.keys.justPressed.ONE)
-		{
-			optionsStack.clear();
-			for (option in options.get('visuals'))
-			{
-				optionsStack.add(new OptionsBox(option.name, option.type));
-			}
-			curSelected = 0;
-		}
+			changeBoxes(OptionCategories.Visuals);
 		if (FlxG.keys.justPressed.TWO)
-		{
-			optionsStack.clear();
-			for (option in options.get('gameplay'))
-			{
-				optionsStack.add(new OptionsBox(option.name, option.type));
-			}
-			curSelected = 0;
-		}
+			changeBoxes(OptionCategories.Gameplay);
 		if (FlxG.keys.justPressed.THREE)
-		{
-			optionsStack.clear();
-			for (option in options.get('input'))
-			{
-				optionsStack.add(new OptionsBox(option.name, option.type));
-			}
-			curSelected = 0;
-		}
+			changeBoxes(OptionCategories.Input);
 		if (FlxG.keys.justPressed.FOUR)
-		{
-			optionsStack.clear();
-			for (option in options.get('sound'))
-			{
-				optionsStack.add(new OptionsBox(option.name, option.type));
-			}
-			curSelected = 0;
-		}
+			changeBoxes(OptionCategories.Audio);
 
 		if (FlxG.keys.justPressed.UP)
 		{
 			if (curSelected > 0)
 				curSelected -= 1;
+			updateSelection();
 		}
 		if (FlxG.keys.justPressed.DOWN)
 		{
 			if (curSelected < optionsStack.length - 1)
 				curSelected += 1;
+			updateSelection();
 		}
 		if (FlxG.keys.justPressed.ESCAPE)
 		{
@@ -148,7 +143,8 @@ class OptionsBox extends FlxSpriteGroup
 	{
 		super(0, 0);
 		var sprite = new FlxSprite(0, 0).loadGraphic(SkinLoader.getSkinnedImage('menu/optionbox.png'));
-		var text = new FlxText(76, 76, 0, text);
+		var text = new FlxText(76, 45, 0, text);
+		text.setFormat(Fonts.NotoSans.Light, 40, 0x000000);
 
 		add(sprite);
 		add(text);
@@ -176,7 +172,7 @@ class OptionsStack extends FlxSpriteGroup
 	{
 		for (sprite in _sprites)
 		{
-			sprite.y = _sprites.indexOf(sprite) * sprite.height + margin;
+			sprite.y = y + _sprites.indexOf(sprite) * sprite.height + margin;
 		}
 	}
 }
