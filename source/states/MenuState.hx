@@ -149,7 +149,7 @@ class MenuState extends FlxState
 			}
 		}
 
-		if (Interactions.Clicked(buttons.members[0])) // Top
+		if (Interactions.Clicked(buttons.members[0]) || FlxG.keys.justPressed.W || FlxG.keys.justPressed.UP) // Top
 			switch (buttontypes[0])
 			{
 				case 'play':
@@ -159,7 +159,7 @@ class MenuState extends FlxState
 				case 'display':
 					gotoPreferences(new VisualState());
 			}
-		if (Interactions.Clicked(buttons.members[1])) // Left
+		if (Interactions.Clicked(buttons.members[1]) || FlxG.keys.justPressed.A || FlxG.keys.justPressed.LEFT) // Left
 			switch (buttontypes[1])
 			{
 				case 'options':
@@ -172,7 +172,7 @@ class MenuState extends FlxState
 				case 'audio':
 					gotoPreferences(new AudioState());
 			}
-		if (Interactions.Clicked(buttons.members[2])) // Right
+		if (Interactions.Clicked(buttons.members[2]) || FlxG.keys.justPressed.D || FlxG.keys.justPressed.RIGHT) // Right
 			switch (buttontypes[2])
 			{
 				case 'download':
@@ -184,7 +184,7 @@ class MenuState extends FlxState
 				case 'yes':
 					exit();
 			}
-		if (Interactions.Clicked(buttons.members[3])) // Ti dayn?
+		if (Interactions.Clicked(buttons.members[3]) || FlxG.keys.justPressed.S || FlxG.keys.justPressed.DOWN) // Down
 			switch (buttontypes[3])
 			{
 				case 'exit':
