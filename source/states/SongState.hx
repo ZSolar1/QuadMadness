@@ -159,7 +159,7 @@ class SongState extends FlxState
 			formattedDiff = FlxStringUtil.toTitleCase(songDiff);
 		}
 
-		QMDiscordRpc.changePresence('Starting $formattedName ($formattedDiff)', null);
+		QMDiscordRpc.changeStatus('Starting $formattedName ($formattedDiff)', null);
 		scrollSpeed = Preferences.scrollSpeed;
 
 		background = new FlxSprite(0, 0).loadGraphic(SkinLoader.getSkinnedImage('menu/background.png'));
@@ -614,7 +614,7 @@ class SongState extends FlxState
 
 		stats.text = 'Hits: $totalHit\nMisses: $misses\nScore: $score\nCombo: $combo / $maxCombo\nAccuracy: $accuracy%';
 		stats.y = FlxG.height - (15 + stats.height);
-		QMDiscordRpc.changePresence('Playing $formattedName ($formattedDiff)', 'Misses: $misses, Acc: $accuracy%');
+		QMDiscordRpc.changeStatus('Playing $formattedName ($formattedDiff)', 'Misses: $misses, Acc: $accuracy%');
 	}
 
 	private function onKeyPress(event:KeyboardEvent):Void
@@ -797,7 +797,7 @@ class PauseSubState extends FlxSubState
 		super();
 		this.songData = songData;
 
-		QMDiscordRpc.changePresence('Paused ${songData[0]} (${songData[1]})', 'Misses: ${songData[2]}, Acc: ${songData[3]}%');
+		QMDiscordRpc.changeStatus('Paused ${songData[0]} (${songData[1]})', 'Misses: ${songData[2]}, Acc: ${songData[3]}%');
 
 	}
 
@@ -815,7 +815,7 @@ class PauseSubState extends FlxSubState
 		new FlxTimer().start(0.5, function(tmr)
 		{
 			close();
-			QMDiscordRpc.changePresence('Playing ${songData[0]} (${songData[1]})', 'Misses: ${songData[2]}, Acc: ${songData[3]}%');
+			QMDiscordRpc.changeStatus('Playing ${songData[0]} (${songData[1]})', 'Misses: ${songData[2]}, Acc: ${songData[3]}%');
 		});
 	}
 
@@ -845,7 +845,7 @@ class LostSubState extends FlxSubState
 		super();
 		this.songData = songData;
 
-		QMDiscordRpc.changePresence('Paused ${songData[0]} (${songData[1]})', 'Misses: ${songData[2]}, Acc: ${songData[3]}%');
+		QMDiscordRpc.changeStatus('Paused ${songData[0]} (${songData[1]})', 'Misses: ${songData[2]}, Acc: ${songData[3]}%');
 	}
 
 	override function update(elapsed:Float)

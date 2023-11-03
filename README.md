@@ -37,9 +37,10 @@ I don't know why you would like to play the game in it's unfinished state. But i
 
 First of all you need [Haxe](https://haxe.org/), I use 4.2.5, newer ones might work.  
 The dependencies that you have to install using haxelib are:
+
 - [HaxeFlixel](https://haxeflixel.com/) (`flixel`) (QuadMadness targets the latest version of HaxeFlixel)
 - HaxeFlixel Addons (`flixel-addons`)
-- Discord RPC (`discord_rpc`)
+- Discord RPC (`discord_rpc`, `https://github.com/Aidan63/linc_discord-rpc`)
 
 Afterwards, you type `lime test windows`.
 It should compile in 10-40 minutes, depending on your PC
