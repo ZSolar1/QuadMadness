@@ -32,7 +32,7 @@
 	<set name="BUILD_DIR" value="export/debug" if="debug" />
 	<set name="BUILD_DIR" value="export/java" if="java" />
 	<set name="BUILD_DIR" value="export"/>
-	<set name="BUILD_DIR" value="export/x86" if="32"/>
+	<set name="BUILD_DIR" value="export/x86" if="32bits"/>
 
 	<source path="source" />
 	<assets path="assets" />

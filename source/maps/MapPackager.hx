@@ -1,7 +1,6 @@
 package maps;
 
-import haxe.io.Bytes;
-import qmp.QMPackage;
+import maps.QMPackage;
 
 class MapPackager
 {

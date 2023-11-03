@@ -5,7 +5,7 @@ import Sys.sleep;
 import discord_rpc.DiscordRpc;
 #end
 
-class QMDiscordRPC
+class QMDiscordRpc
 {
 	// Copied from Psych Engine
 	// https://github.com/ShadowMario/FNF-PsychEngine
@@ -82,9 +82,9 @@ class QMDiscordRPC
 		#if cpp
 		var DiscordDaemon = sys.thread.Thread.create(() ->
 		{
-			new QMDiscordRPC();
+			new QMDiscordRpc();
 		});
-		trace("QMDiscordRPC initialized");
+		trace("QMDiscordRpc initialized");
 		isInitialized = true;
 		#else
 		trace("Can't initialize Discord Client, user is on a non-cpp platform.");

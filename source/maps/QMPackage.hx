@@ -1,6 +1,4 @@
-package qmp;
-
-import haxe.io.Bytes;
+package maps;
 
 enum QMPackageVersion
 {

@@ -23,7 +23,7 @@ import flixel.tweens.FlxTween;
 import flixel.ui.FlxBar;
 import flixel.util.FlxColor;
 import maps.Convert;
-import maps.FNF.Song;
+import maps.FunkinParser.Song;
 import maps.MapChart;
 import openfl.events.KeyboardEvent;
 import states.MenuState;
@@ -159,7 +159,7 @@ class SongState extends FlxState
 			formattedDiff = FlxStringUtil.toTitleCase(songDiff);
 		}
 
-		QMDiscordRPC.changePresence('Starting $formattedName ($formattedDiff)', null);
+		QMDiscordRpc.changePresence('Starting $formattedName ($formattedDiff)', null);
 		scrollSpeed = Preferences.scrollSpeed;
 
 		background = new FlxSprite(0, 0).loadGraphic(SkinLoader.getSkinnedImage('menu/background.png'));
@@ -210,9 +210,9 @@ class SongState extends FlxState
 		if (songType == SongType.FridayNightFunkin)
 		{
 			if (songDiff == 'normal' && !QMAssets.exists('mods/fnf/$songName/$songName-normal.json'))
-				chart = Convert.FNF(Song.loadFromJson('$songName.json', songName));
+				chart = Convert.Funkin(Song.loadFromJson('$songName.json', songName));
 			else
-				chart = Convert.FNF(Song.loadFromJson('$songName-$songDiff.json', songName));
+				chart = Convert.Funkin(Song.loadFromJson('$songName-$songDiff.json', songName));
 		}
 		else if (songType == SongType.OsuMania)
 		{
@@ -614,7 +614,7 @@ class SongState extends FlxState
 
 		stats.text = 'Hits: $totalHit\nMisses: $misses\nScore: $score\nCombo: $combo / $maxCombo\nAccuracy: $accuracy%';
 		stats.y = FlxG.height - (15 + stats.height);
-		QMDiscordRPC.changePresence('Playing $formattedName ($formattedDiff)', 'Misses: $misses, Acc: $accuracy%');
+		QMDiscordRpc.changePresence('Playing $formattedName ($formattedDiff)', 'Misses: $misses, Acc: $accuracy%');
 	}
 
 	private function onKeyPress(event:KeyboardEvent):Void
@@ -797,7 +797,7 @@ class PauseSubState extends FlxSubState
 		super();
 		this.songData = songData;
 
-		QMDiscordRPC.changePresence('Paused ${songData[0]} (${songData[1]})', 'Misses: ${songData[2]}, Acc: ${songData[3]}%');
+		QMDiscordRpc.changePresence('Paused ${songData[0]} (${songData[1]})', 'Misses: ${songData[2]}, Acc: ${songData[3]}%');
 
 	}
 
@@ -815,7 +815,7 @@ class PauseSubState extends FlxSubState
 		new FlxTimer().start(0.5, function(tmr)
 		{
 			close();
-			QMDiscordRPC.changePresence('Playing ${songData[0]} (${songData[1]})', 'Misses: ${songData[2]}, Acc: ${songData[3]}%');
+			QMDiscordRpc.changePresence('Playing ${songData[0]} (${songData[1]})', 'Misses: ${songData[2]}, Acc: ${songData[3]}%');
 		});
 	}
 
@@ -845,7 +845,7 @@ class LostSubState extends FlxSubState
 		super();
 		this.songData = songData;
 
-		QMDiscordRPC.changePresence('Paused ${songData[0]} (${songData[1]})', 'Misses: ${songData[2]}, Acc: ${songData[3]}%');
+		QMDiscordRpc.changePresence('Paused ${songData[0]} (${songData[1]})', 'Misses: ${songData[2]}, Acc: ${songData[3]}%');
 	}
 
 	override function update(elapsed:Float)

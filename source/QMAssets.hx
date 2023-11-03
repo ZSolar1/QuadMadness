@@ -1,8 +1,7 @@
 package;
 
 import haxe.io.Bytes;
-import qmp.QMPackage;
-import openfl.utils.ByteArray;
+import maps.QMPackage;
 
 using StringTools;
 

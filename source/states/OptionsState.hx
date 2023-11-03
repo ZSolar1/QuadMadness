@@ -98,10 +98,10 @@ class OptionsState extends FlxState
 			if (i != curSelected)
 			{
 				FlxTween.cancelTweensOf(optionsStack.members[i]);
-				FlxTween.tween(optionsStack.members[i], {x: FlxG.width / 2 + 256}, 0.35, {ease: FlxEase.quadOut});
+				FlxTween.tween(optionsStack.members[i], {x: FlxG.width / 2 + 256}, 0.35, {ease: FlxEase.expoOut});
 			}
 		}
-		FlxTween.tween(optionsStack.members[curSelected], {x: FlxG.width / 2}, 0.35, {ease: FlxEase.quadOut});
+		FlxTween.tween(optionsStack.members[curSelected], {x: FlxG.width / 2}, 0.35, {ease: FlxEase.expoOut});
 	}
 
 	override public function update(elapsed:Float):Void

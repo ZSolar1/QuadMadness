@@ -9,7 +9,7 @@ import openfl.text.TextField;
 import openfl.text.TextFormat;
 import flixel.FlxG;
 
-class FPSMem extends TextField
+class FpsMem extends TextField
 {
 	private var times:Array<Float>;
 	private var memPeak:Float = 0;

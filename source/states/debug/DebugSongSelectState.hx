@@ -8,7 +8,7 @@ import QMAssets.QMAssets;
 import flixel.FlxG;
 import flixel.FlxState;
 import flixel.text.FlxText;
-import maps.FNF;
+import maps.FunkinParser;
 import flixel.ui.FlxButton;
 
 class DebugSongSelectState extends FlxState

@@ -42,7 +42,7 @@ class MenuState extends FlxState
 	{
 		super.create();
 
-		QMDiscordRPC.changePresence('In the menus', null);
+		QMDiscordRpc.changePresence('In the menus', null);
 
 		background = new FlxSprite(0, 0);
 		background.loadGraphic(SkinLoader.getSkinnedImage('menu/background.png'));

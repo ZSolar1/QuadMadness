@@ -3,11 +3,11 @@ package maps;
 import flixel.math.FlxMath;
 import maps.OsuParser.OsuBeatMap;
 import gameplay.Note;
-import maps.FNF.SwagSong;
+import maps.FunkinParser.SwagSong;
 
 class Convert
 {
-	public static function FNF(song:SwagSong):MapChart
+	public static function Funkin(song:SwagSong):MapChart
 	{
 		var notes:Array<Note> = new Array<Note>();
 		var bpms:Array<Float> = new Array<Float>();

@@ -109,23 +109,23 @@ class Main extends Sprite
 		Globals.version = Lib.application.meta.get('version');
 
 		#if desktop
-		if (!QMDiscordRPC.isInitialized)
+		if (!QMDiscordRpc.isInitialized)
 		{
-			QMDiscordRPC.initialize();
+			QMDiscordRpc.initialize();
 			Application.current.window.onClose.add(function()
 			{
-				QMDiscordRPC.shutdown();
+				QMDiscordRpc.shutdown();
 			});
 		}
 		#end
 		addChild(new QMGame(game.width, game.height, game.initialState, game.updateFramerate, game.drawFramerate, game.skipSplash));
-		addChild(new FPSMem(2, 2, 0xFFFFFF));
+		addChild(new FpsMem(2, 2, 0xFFFFFF));
 		FlxG.maxElapsed = Math.POSITIVE_INFINITY;
 	};
 
 	function onCrash(e:UncaughtErrorEvent)
 	{
-		// QMDiscordRPC.shutdown();
+		// QMDiscordRpc.shutdown();
 		var curDate = Date.now().toString();
 		var callStack:Array<StackItem> = CallStack.exceptionStack(true);
 		curDate = curDate.replace(" ", "_").replace(":", "'");
