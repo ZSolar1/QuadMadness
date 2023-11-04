@@ -1,7 +1,6 @@
 package;
 
 import haxe.Exception;
-import states.CrashHandlerState;
 #if cpp
 import Sys.sleep;
 import discord_rpc.DiscordRpc;
@@ -20,7 +19,7 @@ class QMDiscordRpc
 			onReady: onReady,
 			onError: function(_code:Int, _message:String)
 			{
-				new Exception('QMDiscordRPC: $_code : $_message');
+				new Exception('QMDiscordRpc: $_code : $_message');
 			},
 			onDisconnected: null
 		});
