@@ -104,7 +104,7 @@ class DebugSongSelectState extends FlxState
 			SongState.songName = songNameList[curSelected];
 			SongState.songDiff = songDiffList[curDiffSelected];
 			var songState:SongState = new SongState();
-			FlxG.switchState(songState);
+			Globals.LoadState(songState);
 		}
 		if (FlxG.keys.justPressed.ESCAPE)
 		{

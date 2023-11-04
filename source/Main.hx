@@ -82,9 +82,9 @@ class QMGame extends FlxGame
 		}
 	}
 	function crashHandler(timer:FlxTimer):Void
-		{
-			FlxG.switchState(new CrashHandlerState(message, stack));
-		}
+	{
+		FlxG.switchState(new CrashHandlerState(message, stack));
+	}
 }
 
 class Main extends Sprite
@@ -98,9 +98,8 @@ class Main extends Sprite
 			width: 0,
 			height: 0,
 			initialState: IntroState,
-			// Will that work?
-			updateFramerate: 999,
-			drawFramerate: 999,
+			updateFramerate: 144,
+			drawFramerate: 144,
 			skipSplash: true
 		};
 

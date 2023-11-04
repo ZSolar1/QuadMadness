@@ -108,7 +108,7 @@ class OptionsState extends FlxState
 	{
 		super.update(elapsed);
 
-		optionsStack.y = FlxMath.lerp(optionsStack.y, -(curSelected * 152) + 152, 0.02);
+		optionsStack.y = FlxMath.lerp(optionsStack.y, -(curSelected * 152) + 152, 0.1);
 		if (FlxG.keys.justPressed.ONE)
 			changeBoxes(OptionCategories.Visuals);
 		if (FlxG.keys.justPressed.TWO)

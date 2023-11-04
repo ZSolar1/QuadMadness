@@ -53,10 +53,8 @@ class SongSelectState extends FlxState
 		songNameList = QMAssets.FNFreadAllCharts();
 		if (songNameList == null)
 		{
-			FlxG.switchState(new states.CrashHandlerState("You don't have any songs added. To add a new song or multiple songs, In the games main folder, add a folder called mods. Then make a folder named the type of mod you want to add. For a starter pack, go to (link here) For more info on how to install mods, read this (article?? idfk) here: (link here)", null));
-			trace("No songs!");
-			var noSongs = new SongSelectBox(0, "No songs!", 0);
-			add(noSongs);
+			// TODO: Add notification
+			Globals.LoadState(new MenuState());
 		}
 		else
 		{
@@ -203,7 +201,7 @@ class SongSelectState extends FlxState
 		{
 			MapPackager.extractSong(songNameList[curSelected]);
 		}
-		songBoxes.y = FlxMath.lerp(prevSongBoxY, -(curSelected * 152 - (152 * 2)) + (Math.abs(FlxG.height - 720) / 2), 0.02);
+		songBoxes.y = FlxMath.lerp(prevSongBoxY, -(curSelected * 152 - (152 * 2)) + (Math.abs(FlxG.height - 720) / 2), 0.16);
 	}
 }
 

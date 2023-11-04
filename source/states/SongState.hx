@@ -1,7 +1,5 @@
 package states;
 
-import lime.media.openal.ALFilter;
-import lime.media.openal.AL;
 import skin.SkinLoader;
 import flixel.util.FlxStringUtil;
 import maps.OsuParser;
@@ -91,7 +89,6 @@ class SongState extends FlxState
 	var voices:FlxSound;
 
 	var music:openfl.media.Sound;
-	var filter:ALFilter;
 
 	public static var curBeat:Int;
 	public static var curStep:Int;
@@ -250,8 +247,11 @@ class SongState extends FlxState
 			music = Sound.fromFile('mods/mania/$songName/${chart.additionalData[0]}');
 		}
 
-		startCountdown();
-		trace('Started Countdown');
+		new FlxTimer().start(2, function(tmr:FlxTimer)
+		{
+			startCountdown();
+			trace('Started Countdown');
+		});
 	}
 
 	// Finally added beats and steps
@@ -371,17 +371,6 @@ class SongState extends FlxState
 			FlxG.sound.playMusic(music, 1, false);
 			FlxG.sound.list.add(voices);
 			voices.play(true, 0.0);
-			@:privateAccess var buf = FlxG.sound.music._sound.__buffer.__srcBuffer;
-			filter = AL.createFilter();
-			AL.filteri(filter, AL.FILTER_TYPE, AL.FILTER_LOWPASS);
-			AL.filterf(filter, AL.LOWPASS_GAIN, 0.8);
-			AL.filterf(filter, AL.LOWPASS_GAINHF, 0);
-			AL.sourcei(buf, AL.DIRECT_FILTER, filter);
-			if (songType == SongType.FridayNightFunkin)
-			{
-				@:privateAccess var vbuf = voices._sound.__buffer.__srcBuffer;
-				AL.sourcei(vbuf, AL.DIRECT_FILTER, filter);
-			}
 
 			FlxG.sound.music.onComplete = endSong;
 
@@ -482,14 +471,6 @@ class SongState extends FlxState
 	private function changeHealth(amount:Float)
 	{
 		health = FlxMath.bound(health + amount, 0, 1);
-		@:privateAccess var buf = FlxG.sound.music._sound.__buffer.__srcBuffer;
-		AL.filterf(filter, AL.LOWPASS_GAINHF, FlxMath.bound(health * 2, 0, 1));
-		AL.sourcei(buf, AL.DIRECT_FILTER, filter);
-		if (songType == SongType.FridayNightFunkin)
-		{
-			@:privateAccess var vbuf = voices._sound.__buffer.__srcBuffer;
-			AL.sourcei(vbuf, AL.DIRECT_FILTER, filter);
-		}
 		updateHealthText();
 		if (health == 0)
 			lose();
@@ -757,7 +738,7 @@ class SongState extends FlxState
 			curBeat = Math.floor(beats);
 
 			FlxG.camera.zoom = FlxMath.lerp(1, FlxG.camera.zoom, FlxMath.bound(1 - (elapsed * 3.125), 0, 1));
-			health = FlxMath.lerp(health, prevHealth, 0.5 * elapsed);
+			// health = FlxMath.lerp(health, prevHealth, 0.5 * elapsed);
 
 			// So simple, yet so effective
 			if (prevStep != curStep)

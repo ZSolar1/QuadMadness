@@ -167,6 +167,6 @@ class OsuSongSelectState extends FlxState
 		{
 			MapPackager.extractSong(songNameList[curSelected]);
 		}
-		songBoxes.y = FlxMath.lerp(prevSongBoxY, -(curSelected * 152 - (152 * 2)), 0.02);
+		songBoxes.y = FlxMath.lerp(prevSongBoxY, -(curSelected * 152 - (152 * 2)), 0.1);
 	}
 }

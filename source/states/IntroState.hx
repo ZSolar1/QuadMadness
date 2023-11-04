@@ -35,7 +35,6 @@ class IntroState extends FlxState
 	override public function create()
 	{
 		super.create();
-		FlxG.fixedTimestep = false;
 		FlxSprite.defaultAntialiasing = true;
 
 		#if desktop

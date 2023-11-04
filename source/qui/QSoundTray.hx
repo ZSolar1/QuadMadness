@@ -70,7 +70,7 @@ class QSoundTray extends FlxSoundTray
 		}
 
 		// 50 from left, 50 from right, 161 width of max volume
-		volumeBar.width = FlxMath.lerp(volumeBar.width, FlxG.sound.muted ? 0 : FlxG.sound.volume * 50, 0.02);
+		volumeBar.width = FlxMath.lerp(volumeBar.width, FlxG.sound.muted ? 0 : FlxG.sound.volume * 50, 0.1);
 		volumeText.x = volumeBar.x + volumeBar.width + 5;
 		var percentage = Math.ceil(volumeBar.width * 2);
 		volumeText.text = '${percentage == 1 ? 0 : percentage}%';
