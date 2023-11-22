@@ -10,11 +10,11 @@ import flixel.text.FlxText;
 class VisualState extends FlxState
 {
 	var background:ParallaxSprite;
+
 	// var buttonBack:QButton;
 	// var buttonApply:QButton;
 	// var buttonAudio:QButton;
 	// var buttonInput:QButton;
-
 	var optionLabels:FlxTypedGroup<FlxText>;
 	var optionVarLabels:FlxTypedGroup<FlxText>;
 	var optionDesc:FlxText;
@@ -121,6 +121,11 @@ class VisualState extends FlxState
 	{
 		super.update(elapsed);
 		updateVars();
+		if (FlxG.keys.justPressed.BACKSPACE || FlxG.keys.justPressed.ESCAPE)
+		{
+			Preferences.savePrefs('visual');
+			FlxG.switchState(new MenuState());
+		}
 		// if (Interactions.Clicked(buttonBack.icon))
 		// {
 		// 	buttonBack.dissapear();

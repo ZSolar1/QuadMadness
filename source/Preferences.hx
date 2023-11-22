@@ -3,10 +3,10 @@ import flixel.input.keyboard.FlxKey;
 
 class Preferences
 {
-	public static var downscroll:Bool = true;
+	public static var downscroll:Bool = false;
 	public static var windowed:Bool = true;
-	public static var scrollSpeed:Float = 1.0;
-	public static var visualOffset:Float = 0.0;
+	public static var scrollSpeed:Float = 2.5;
+	public static var visualOffset:Float = -30;
 	public static var skin:String;
 
 	public static var audioOffset:Float = 0.0;
@@ -15,10 +15,10 @@ class Preferences
 	public static var hitsoundVolume:Int = 100;
 
 	public static var keyBinds:Map<String, Array<FlxKey>> = [
-		'left' => [A, LEFT],
-		'down' => [S, DOWN],
-		'up' => [W, UP],
-		'right' => [D, RIGHT],
+		'left' => [D, LEFT],
+		'down' => [F, DOWN],
+		'up' => [J, UP],
+		'right' => [K, RIGHT],
 		'pause' => [ESCAPE, ENTER],
 	];
 

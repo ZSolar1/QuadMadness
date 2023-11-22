@@ -10,11 +10,11 @@ import flixel.text.FlxText;
 class AudioState extends FlxState
 {
 	var background:ParallaxSprite;
+
 	// var buttonBack:QButton;
 	// var buttonApply:QButton;
 	// var buttonVideo:QButton;
 	// var buttonInput:QButton;
-
 	var optionLabels:FlxTypedGroup<FlxText>;
 	var optionVarLabels:FlxTypedGroup<FlxText>;
 	var optionDesc:FlxText;
@@ -112,14 +112,11 @@ class AudioState extends FlxState
 	{
 		super.update(elapsed);
 		updateVars();
-		// if (Interactions.Clicked(buttonBack.icon))
-		// {
-		// 	buttonBack.dissapear();
-		// 	new FlxTimer().start(0.5, function(tmr)
-		// 	{
-		// 		FlxG.switchState(new MenuState());
-		// 	});
-		// }
+		if (FlxG.keys.justPressed.BACKSPACE || FlxG.keys.justPressed.ESCAPE)
+		{
+			Preferences.savePrefs('audio');
+			FlxG.switchState(new MenuState());
+		}
 		// if (Interactions.Clicked(buttonVideo.icon))
 		// {
 		// 	buttonVideo.dissapear();
