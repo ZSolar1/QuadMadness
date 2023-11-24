@@ -9,7 +9,7 @@ import flixel.group.FlxSpriteGroup;
 import flixel.FlxSprite;
 import openfl.system.System;
 import flixel.FlxSubState;
-import QMAssets.QMAssets;
+import SMAssets.SMAssets;
 import flixel.FlxG;
 import flixel.FlxState;
 import flixel.text.FlxText;
@@ -40,7 +40,7 @@ class OsuSongSelectState extends FlxState
 		var background = new FlxSprite(0, 0).loadGraphic('assets/images/menu/background.png');
 		background.color = 0xFF333333;
 		add(background);
-		songNameList = QMAssets.OsuReadAllCharts();
+		songNameList = SMAssets.OsuReadAllCharts();
 		songBoxes = new FlxTypedSpriteGroup<SongSelectBox>();
 		refillDiffs();
 		fillSongs();
@@ -60,7 +60,7 @@ class OsuSongSelectState extends FlxState
 
 	private function fillDiffs()
 	{
-		songDiffList = QMAssets.OsuReadAllDiffs(songNameList[curSelected]);
+		songDiffList = SMAssets.OsuReadAllDiffs(songNameList[curSelected]);
 		var i = 0;
 		for (sd in songDiffList)
 		{
@@ -115,7 +115,7 @@ class OsuSongSelectState extends FlxState
 
 	private function refillDiffs()
 	{
-		songDiffList = QMAssets.OsuReadAllDiffs(songNameList[curSelected]);
+		songDiffList = SMAssets.OsuReadAllDiffs(songNameList[curSelected]);
 	}
 
 	private function changeSelection(amount:Int)

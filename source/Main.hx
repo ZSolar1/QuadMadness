@@ -1,6 +1,6 @@
 package;
 
-import qui.QSoundTray;
+import qui.SMSoundTray;
 import flixel.FlxState;
 import SongSaveData.Scores;
 import states.CrashHandlerState;
@@ -31,7 +31,7 @@ class QMGame extends FlxGame
 	{
 		super(gameWidth, gameHeight, initialState, updateFramerate, drawFramerate, skipSplash, startFullscreen);
 
-		_customSoundTray = QSoundTray;
+		_customSoundTray = SMSoundTray;
 	}
 	
 	override function create(_:Event)
@@ -108,12 +108,12 @@ class Main extends Sprite
 		Globals.version = Lib.application.meta.get('version');
 
 		#if desktop
-		if (!QMDiscordRpc.isInitialized)
+		if (!SMDiscordRpc.isInitialized)
 		{
-			QMDiscordRpc.initialize();
+			SMDiscordRpc.initialize();
 			Application.current.window.onClose.add(function()
 			{
-				QMDiscordRpc.shutdown();
+				SMDiscordRpc.shutdown();
 			});
 		}
 		#end

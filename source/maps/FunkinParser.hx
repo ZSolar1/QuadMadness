@@ -1,6 +1,6 @@
 package maps;
 
-import QMAssets.QMAssets;
+import SMAssets.SMAssets;
 import haxe.Json;
 
 using StringTools;
@@ -74,7 +74,7 @@ class Song
 
 	public static function loadFromJson(jsonInput:String, ?folder:String):SwagSong
 	{
-		var rawJson = QMAssets.readModChart('fnf', (folder.toLowerCase() + '/' + jsonInput.toLowerCase())).trim();
+		var rawJson = SMAssets.readModChart('fnf', (folder.toLowerCase() + '/' + jsonInput.toLowerCase())).trim();
 
 		#if !html5
 		while (!rawJson.endsWith("}"))

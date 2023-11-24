@@ -1,6 +1,6 @@
 package maps;
 
-import maps.QMPackage;
+import maps.SMPackage;
 
 class MapPackager
 {
@@ -17,7 +17,7 @@ class MapPackager
 	public static function packageSong(game:String, song:String)
 	{
 		var files:Array<String>;
-		var songPackage:QMPackage = {
+		var songPackage:SMPackage = {
 			Info: {
 				Version: VERSION_FIRST,
 				Type: TYPE_SONG
@@ -25,16 +25,16 @@ class MapPackager
 			Entries: []
 		};
 		if (game == 'fnf')
-			files = QMAssets.readModDirectory('fnf/$song');
+			files = SMAssets.readModDirectory('fnf/$song');
 		else
 			files = [];
-		songPackage.Info.Version = QMPackageVersion.VERSION_FIRST;
-		songPackage.Info.Type = QMPackageType.TYPE_SONG;
+		songPackage.Info.Version = SMPackageVersion.VERSION_FIRST;
+		songPackage.Info.Type = SMPackageType.TYPE_SONG;
 
 		for (filename in files)
 		{
-			var file = QMAssets.readBinaryModChart(game, '$song/$filename');
-			var entry:QMPackageEntry = {
+			var file = SMAssets.readBinaryModChart(game, '$song/$filename');
+			var entry:SMPackageEntry = {
 				Name: "",
 				Data: "",
 			};
@@ -43,21 +43,21 @@ class MapPackager
 			songPackage.Entries.push(entry);
 		}
 
-		QMAssets.writeChartPackage(song, songPackage);
+		SMAssets.writeChartPackage(song, songPackage);
 	}
 
-	private static function castJsonToPackage(data:String):QMPackage
+	private static function castJsonToPackage(data:String):SMPackage
 		return cast haxe.Json.parse(data);
 
 	public static function extractSong(song:String)
 	{
-		var data = QMAssets.readModChart('charts', '$song.qmp');
-		var songPackage:QMPackage = castJsonToPackage(data);
+		var data = SMAssets.readModChart('charts', '$song.qmp');
+		var songPackage:SMPackage = castJsonToPackage(data);
 
-		QMAssets.makeDirectory('mods/charts/$song');
+		SMAssets.makeDirectory('mods/charts/$song');
 		for (file in songPackage.Entries)
 		{
-			QMAssets.writeHexChart(song, file.Name, file.Data);
+			SMAssets.writeHexChart(song, file.Name, file.Data);
 		}
 	}
 }

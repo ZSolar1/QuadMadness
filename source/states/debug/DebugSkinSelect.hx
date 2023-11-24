@@ -1,6 +1,6 @@
 package states.debug;
 
-import QMAssets.QMAssets;
+import SMAssets.SMAssets;
 import flixel.FlxG;
 import flixel.text.FlxText;
 import flixel.FlxState;
@@ -17,7 +17,7 @@ class DebugSkinSelect extends FlxState
 		super.create();
 		pickerSym = new FlxText(48, 64, FlxG.width - 128, ">");
 		skins = new FlxText(64, 64, FlxG.width - 128);
-		skinList = QMAssets.readAllSkins();
+		skinList = SMAssets.readAllSkins();
 		for (sn in skinList)
 		{
 			skins.text += '$sn\n';

@@ -1,5 +1,6 @@
 package states;
 
+import flixel.addons.display.FlxBackdrop;
 import flixel.FlxCamera;
 import skin.SkinLoader;
 import flixel.FlxSprite;
@@ -21,7 +22,8 @@ class MenuState extends FlxState
 	var logo:ParallaxSprite;
 
 	var buttons:FlxTypedGroup<ParallaxSprite>;
-	var buttonCam:FlxCamera; //camera so the button icons follow the logo PNG. it isn't seperate and im too lazy to fix it.
+	var buttonCam:FlxCamera; //cameras so the button icons follow the logo PNG. it isn't seperate and im too lazy to fix it.
+	// var bgCam:FlxCamera;
 	var buttontypes:Array<String> = [];
 	var menuMode:String = 'main';
 	var canPress:Bool = true;
@@ -54,13 +56,20 @@ class MenuState extends FlxState
 			FlxG.sound.playMusic('assets/music/menu.ogg', 1, true);
 			FlxG.sound.music.time = 13339;
 		}
-		QMDiscordRpc.changeStatus('In the menus', null);
+		SMDiscordRpc.changeStatus('In the menus', null);
 
+		// bgCam = new FlxCamera(0, 0, 1280, 720, 0);
+		// FlxG.cameras.add(bgCam);
+		var checker = new FlxBackdrop(SkinLoader.getSkinnedImage('menu/checker.png'), XY);
+		checker.velocity.x = 20;
+		//checker.camera = bgCam;
+		add(checker);
 		background = new FlxSprite(0, 0);
 		background.loadGraphic(SkinLoader.getSkinnedImage('menu/background.png'));
 		background.scale.x = 1.25;
 		background.scale.y = 1.25;
 		background.antialiasing = true;
+		//background.camera = bgCam;
 		add(background);
 
 		buttonCam = new FlxCamera(0, 0, 1280, 720, 0);
@@ -148,6 +157,7 @@ class MenuState extends FlxState
 	{
 		createButtons('none');
 		canPress = false;
+		buttonCam.fade(0xFF000000, 0.5);
 		FlxTween.tween(buttonCam, {zoom: 1.25}, 0.5, {
 			ease: FlxEase.quadOut
 		});

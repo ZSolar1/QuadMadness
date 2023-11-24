@@ -1,11 +1,12 @@
 package states;
 
+import flixel.addons.display.FlxBackdrop;
 import states.songselect.SongSelectState;
 import skin.SkinLoader;
 import flixel.util.FlxStringUtil;
 import maps.OsuParser;
 import flixel.util.FlxTimer;
-import QMAssets.QMAssets;
+import SMAssets.SMAssets;
 import SongSaveData.Scores;
 import flash.media.Sound;
 import flixel.FlxG;
@@ -148,9 +149,12 @@ class SongState extends BPMState
 			formattedDiff = FlxStringUtil.toTitleCase(songDiff);
 		}
 
-		QMDiscordRpc.changeStatus('Starting $formattedName ($formattedDiff)', null);
+		SMDiscordRpc.changeStatus('Starting $formattedName ($formattedDiff)', null);
 		scrollSpeed = Preferences.scrollSpeed;
 
+		var checker = new FlxBackdrop(SkinLoader.getSkinnedImage('menu/checker.png'), XY);
+		checker.velocity.x = 20;
+		add(checker);
 		background = new FlxSprite(0, 0).loadGraphic(SkinLoader.getSkinnedImage('menu/background.png'));
 		background.color = 0xFF333333;
 		background.setGraphicSize(FlxG.width, FlxG.height);
@@ -205,7 +209,7 @@ class SongState extends BPMState
 		trace('Ready to load song');
 		if (songType == SongType.FridayNightFunkin)
 		{
-			if (songDiff == 'normal' && !QMAssets.exists('mods/fnf/$songName/$songName-normal.json'))
+			if (songDiff == 'normal' && !SMAssets.exists('mods/fnf/$songName/$songName-normal.json'))
 				chart = Convert.Funkin(Song.loadFromJson('$songName.json', songName));
 			else
 				chart = Convert.Funkin(Song.loadFromJson('$songName-$songDiff.json', songName));
@@ -393,17 +397,17 @@ class SongState extends BPMState
 		var diff = Math.abs(note.strumTime - songPos);
 		if (!note.isSustain)
 		{
-			if (QMath.isBetween(diff, Conductor.hitFrame * 0.75, Conductor.hitFrame, true))
+			if (SMath.isBetween(diff, Conductor.hitFrame * 0.75, Conductor.hitFrame, true))
 			{
 				score = 100;
 				rating = 0.5;
 			}
-			else if (QMath.isBetween(diff, Conductor.hitFrame * 0.35, Conductor.hitFrame * 0.75, false))
+			else if (SMath.isBetween(diff, Conductor.hitFrame * 0.35, Conductor.hitFrame * 0.75, false))
 			{
 				score = 200;
 				rating = 0.75;
 			}
-			else if (QMath.isBetween(diff, 0, Conductor.hitFrame * 0.35, true))
+			else if (SMath.isBetween(diff, 0, Conductor.hitFrame * 0.35, true))
 			{
 				score = 350;
 				rating = 1;
@@ -552,15 +556,15 @@ class SongState extends BPMState
 	private function updateScore()
 	{
 		accuracy = hitRating != 0 || totalNotes != 0 ? FlxMath.roundDecimal((hitRating / totalNotes) * 100, 2) : 0;
-		if (QMath.isBetween(accuracy, 0, 60, true))
+		if (SMath.isBetween(accuracy, 0, 60, true))
 			rankNum = 0;
-		else if (QMath.isBetween(accuracy, 60, 70, true))
+		else if (SMath.isBetween(accuracy, 60, 70, true))
 			rankNum = 1;
-		else if (QMath.isBetween(accuracy, 70, 80, true))
+		else if (SMath.isBetween(accuracy, 70, 80, true))
 			rankNum = 2;
-		else if (QMath.isBetween(accuracy, 80, 90, true))
+		else if (SMath.isBetween(accuracy, 80, 90, true))
 			rankNum = 3;
-		else if (QMath.isBetween(accuracy, 90, 100, false))
+		else if (SMath.isBetween(accuracy, 90, 100, false))
 			rankNum = 4;
 		else if (accuracy >= 100)
 			rankNum = 5;
@@ -588,7 +592,7 @@ class SongState extends BPMState
 
 		stats.text = 'Hits: $totalHit\nMisses: $misses\nScore: $score\nCombo: $combo / $maxCombo\nAccuracy: $accuracy%';
 		stats.y = FlxG.height - (15 + stats.height);
-		QMDiscordRpc.changeStatus('Playing $formattedName ($formattedDiff)', 'Misses: $misses, Acc: $accuracy%');
+		SMDiscordRpc.changeStatus('Playing $formattedName ($formattedDiff)', 'Misses: $misses, Acc: $accuracy%');
 	}
 
 	private function onKeyPress(event:KeyboardEvent):Void
@@ -723,14 +727,7 @@ class SongState extends BPMState
 				{
 					if (note.canBeHit)
 					{
-						if (note.isSustain)
-						{
-							if (note.canBeHit)
-							{
-								hitNote(note);
-							}
-						}
-						else if (note.strumTime <= songPos || note.isSustain)
+						if (note.strumTime <= songPos || note.isSustain)
 						{
 							hitNote(note);
 						}
@@ -794,7 +791,7 @@ class PauseSubState extends FlxSubState
 		super();
 		this.songData = songData;
 
-		QMDiscordRpc.changeStatus('Paused ${songData[0]} (${songData[1]})', 'Misses: ${songData[2]}, Acc: ${songData[3]}%');
+		SMDiscordRpc.changeStatus('Paused ${songData[0]} (${songData[1]})', 'Misses: ${songData[2]}, Acc: ${songData[3]}%');
 	}
 
 	override function update(elapsed:Float)
@@ -815,7 +812,7 @@ class PauseSubState extends FlxSubState
 		new FlxTimer().start(0.5, function(tmr)
 		{
 			close();
-			QMDiscordRpc.changeStatus('Playing ${songData[0]} (${songData[1]})', 'Misses: ${songData[2]}, Acc: ${songData[3]}%');
+			SMDiscordRpc.changeStatus('Playing ${songData[0]} (${songData[1]})', 'Misses: ${songData[2]}, Acc: ${songData[3]}%');
 		});
 	}
 
@@ -845,7 +842,7 @@ class LostSubState extends FlxSubState
 		super();
 		this.songData = songData;
 
-		QMDiscordRpc.changeStatus('Paused ${songData[0]} (${songData[1]})', 'Misses: ${songData[2]}, Acc: ${songData[3]}%');
+		SMDiscordRpc.changeStatus('Paused ${songData[0]} (${songData[1]})', 'Misses: ${songData[2]}, Acc: ${songData[3]}%');
 	}
 
 	override function update(elapsed:Float)

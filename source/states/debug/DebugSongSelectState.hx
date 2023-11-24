@@ -4,7 +4,7 @@ import maps.MapPackager;
 #if desktop
 import sys.io.File;
 #end
-import QMAssets.QMAssets;
+import SMAssets.SMAssets;
 import flixel.FlxG;
 import flixel.FlxState;
 import flixel.text.FlxText;
@@ -30,7 +30,7 @@ class DebugSongSelectState extends FlxState
 		pickerDiffSym = new FlxText(176, 64, FlxG.width - 128, ">");
 		songs = new FlxText(64, 64, FlxG.width - 128);
 		diffs = new FlxText(192, 64, FlxG.width - 128);
-		songNameList = QMAssets.FNFreadAllCharts();
+		songNameList = SMAssets.FNFreadAllCharts();
 		refillDiffs();
 		for (sn in songNameList)
 		{
@@ -45,7 +45,7 @@ class DebugSongSelectState extends FlxState
 	private function refillDiffs()
 	{
 		diffs.text = "";
-		songDiffList = QMAssets.FNFreadAllDiffs(songNameList[curSelected]);
+		songDiffList = SMAssets.FNFreadAllDiffs(songNameList[curSelected]);
 		for (diff in songDiffList)
 		{
 			diffs.text += '$diff\n';

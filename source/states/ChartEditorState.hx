@@ -143,7 +143,7 @@ class ChartEditorState extends FlxState
 	{
 		var chart:MapChart = new MapChart(notes.members, [0], []);
 		var chartJson:String = cast Json.stringify(chart);
-		QMAssets.writeChart(songName, songDiff, chartJson);
+		SMAssets.writeChart(songName, songDiff, chartJson);
 	}
 
 	override function update(elapsed:Float)

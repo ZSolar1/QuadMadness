@@ -1,7 +1,7 @@
 package skin;
 
 import flixel.system.FlxAssets.FlxGraphicAsset;
-import QMAssets.QMAssets;
+import SMAssets.SMAssets;
 import flash.display.BitmapData;
 
 class SkinLoader
@@ -10,7 +10,7 @@ class SkinLoader
 	{
 		if (Preferences.skin != null)
 		{
-			if (QMAssets.exists('mods/skins/${Preferences.skin}/$path'))
+			if (SMAssets.exists('mods/skins/${Preferences.skin}/$path'))
 			{
 				return cast(BitmapData.fromFile('mods/skins/${Preferences.skin}/$path'));
 			}

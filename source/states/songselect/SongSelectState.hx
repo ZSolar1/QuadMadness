@@ -1,5 +1,6 @@
 package states.songselect;
 
+import flixel.addons.display.FlxBackdrop;
 import states.SongState.SongType;
 import skin.SkinLoader;
 import maps.MapPackager;
@@ -10,7 +11,7 @@ import flixel.group.FlxSpriteGroup;
 import flixel.FlxSprite;
 import openfl.system.System;
 import flixel.FlxSubState;
-import QMAssets.QMAssets;
+import SMAssets.SMAssets;
 import flixel.FlxG;
 import flixel.FlxState;
 import flixel.text.FlxText;
@@ -51,10 +52,13 @@ class SongSelectState extends FlxState
 			FlxG.sound.playMusic('assets/music/menu.ogg', 1, true);
 			FlxG.sound.music.time = 13339;
 		}
+		var checker = new FlxBackdrop(SkinLoader.getSkinnedImage('menu/checker.png'), XY);
+		checker.velocity.x = 20;
+		add(checker);
 		background = new FlxSprite(0, 0).loadGraphic(SkinLoader.getSkinnedImage('menu/background.png'));
 		background.color = 0xFF333333;
 		add(background);
-		songNameList = QMAssets.FNFreadAllCharts();
+		songNameList = SMAssets.FNFreadAllCharts();
 		if (songNameList == null)
 		{
 			// TODO: Add notification
@@ -83,7 +87,7 @@ class SongSelectState extends FlxState
 	private function fillDiffs()
 	{
 		songDiffList = [];
-		songDiffList = QMAssets.FNFreadAllDiffs(songNameList[curSelected]);
+		songDiffList = SMAssets.FNFreadAllDiffs(songNameList[curSelected]);
 		var i = 0;
 		for (sd in songDiffList)
 		{
@@ -138,7 +142,7 @@ class SongSelectState extends FlxState
 
 	private function refillDiffs()
 	{
-		songDiffList = QMAssets.FNFreadAllDiffs(songNameList[curSelected]);
+		songDiffList = SMAssets.FNFreadAllDiffs(songNameList[curSelected]);
 	}
 
 	private function changeSelection(amount:Int)
