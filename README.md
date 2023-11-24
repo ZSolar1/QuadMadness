@@ -1,12 +1,12 @@
-# QuadMadness
+# SolarMadness
 
 ## What is this?
 
-QuadMadness is a rhythm game made in HaxeFlixel
+SolarMadness is a fork of a rhythm game made in HaxeFlixel, originally called [QuadMadness](https://github.com/Aura42069/QuadMadness).
 
 ## Why is this?
 
-After getting inspired by FNF and it's engine, I decided to try making a rhythm game of my own. The visual art-style is heavily inspired by [osu!lazer](https://lazer.ppy.sh/), and tries to aim at it's fluidity and cleanliness. This game is supposed to be highly-moddable with compatibility with different games.
+After getting inspired by FNF and it's engine, Aura decided to try making a rhythm game of my own. The visual art-style is heavily inspired by [osu!lazer](https://lazer.ppy.sh/), and tries to aim at it's fluidity and cleanliness. This game is supposed to be highly-moddable with compatibility with different games. I made a fork of it because I wanted to help the project, but Aura said they wanted to make it on their own. This had laed me to extend this project with this fork.
 
 ## Currently available features
 - Autoplaying songs (Won't save score)
@@ -38,7 +38,7 @@ I don't know why you would like to play the game in it's unfinished state. But i
 First of all you need [Haxe](https://haxe.org/), I use 4.2.5, newer ones might work.  
 The dependencies that you have to install using haxelib are:
 
-- [HaxeFlixel](https://haxeflixel.com/) (`flixel`) (QuadMadness targets the latest version of HaxeFlixel)
+- [HaxeFlixel](https://haxeflixel.com/) (`flixel`) (SolarMadness targets the latest version of HaxeFlixel)
 - HaxeFlixel Addons (`flixel-addons`)
 - Discord RPC (`discord_rpc`, `https://github.com/Aidan63/linc_discord-rpc`)
 
