@@ -71,6 +71,10 @@ class OptionsState extends FlxState
 	{
 		super.create();
 
+		if (FlxG.sound.music == null){
+			FlxG.sound.playMusic('assets/music/menu.ogg', 1, true);
+			FlxG.sound.music.time = 13339;
+		}
 		background = new FlxSprite(0, 0);
 		background.loadGraphic(SkinLoader.getSkinnedImage('menu/background.png'));
 		add(background);

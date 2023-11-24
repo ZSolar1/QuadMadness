@@ -46,7 +46,11 @@ class SongSelectState extends FlxState
 	override public function create()
 	{
 		super.create();
-
+		curSelected = FlxG.save.data.curFNFSongSelected;
+		if (FlxG.sound.music == null){
+			FlxG.sound.playMusic('assets/music/menu.ogg', 1, true);
+			FlxG.sound.music.time = 13339;
+		}
 		background = new FlxSprite(0, 0).loadGraphic(SkinLoader.getSkinnedImage('menu/background.png'));
 		background.color = 0xFF333333;
 		add(background);
@@ -145,6 +149,7 @@ class SongSelectState extends FlxState
 			curSelected = 0;
 		if (curSelected < 0)
 			curSelected = songBoxes.length - 1;
+		FlxG.save.data.curFNFSongSelected = curSelected;
 		refillDiffs();
 	}
 

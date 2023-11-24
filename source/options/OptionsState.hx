@@ -40,7 +40,10 @@ class OptionsState extends FlxState
 	override function create()
 	{
 		super.create();
-
+		if (FlxG.sound.music == null){
+			FlxG.sound.playMusic('assets/music/menu.ogg', 1, true);
+			FlxG.sound.music.time = 13339;
+		}
 		optionsCatSprites = new FlxTypedGroup<FlxSprite>();
 		optionsCatNames = new FlxTypedGroup<FlxText>();
 

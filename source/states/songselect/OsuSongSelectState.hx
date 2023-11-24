@@ -33,6 +33,10 @@ class OsuSongSelectState extends FlxState
 	{
 		super.create();
 
+		if (FlxG.sound.music == null){
+			FlxG.sound.playMusic('assets/music/menu.ogg', 1, true);
+			FlxG.sound.music.time = 13339;
+		}
 		var background = new FlxSprite(0, 0).loadGraphic('assets/images/menu/background.png');
 		background.color = 0xFF333333;
 		add(background);

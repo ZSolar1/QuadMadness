@@ -1,5 +1,6 @@
 package states;
 
+import states.debug.DebugStrumsState;
 import skin.SkinLoader;
 #if MULTIPLAYER_TEST
 import openfl.net.Socket;
@@ -17,9 +18,12 @@ import flixel.input.touch.FlxTouch;
 import flixel.input.touch.FlxTouchManager;
 #end
 
-class IntroState extends FlxState
+class IntroState extends BPMState
 {
 	var quads:Array<FlxSprite> = [];
+	var positions:Array<Array<Float>> = [[0.0, 128.0], [128.0, 0.0], [256.0, 128.0], [128.0, 256.0]];
+	var skipText:FlxText;
+	public static var cameFromIntro:Bool = true;
 
 	override function onResize(Width:Int, Height:Int)
 	{
@@ -32,9 +36,7 @@ class IntroState extends FlxState
 
 	}
 
-	override public function create()
-	{
-		super.create();
+	function init(){
 		FlxSprite.defaultAntialiasing = true;
 
 		#if desktop
@@ -52,47 +54,69 @@ class IntroState extends FlxState
 		});
 		socket.connect("127.0.0.1", 25564);
 		#end
-
+		if (FlxG.save.data.curFNFSongSelected == null)
+			FlxG.save.data.curFNFSongSelected = 0;
 		FlxG.scaleMode = new flixel.system.scaleModes.StageSizeScaleMode();
+		bpm = 180;
+		updateCrochet();
+		FlxG.sound.playMusic('assets/music/menu.ogg', 1, true);
+	}
 
-		var positions:Array<Array<Float>> = [[0.0, 128.0], [128.0, 0.0], [256.0, 128.0], [128.0, 256.0]];
+	override public function create()
+	{
+		super.create();
+		init();
+		skipText = new FlxText(0, 650, FlxG.width, 'Press ENTER To Skip', 30);
+		skipText.alignment = CENTER;
+		skipText.screenCenter(X);
+		skipText.font = Fonts.NotoSans.Light;
+		add(skipText);
+		var quad = new FlxSprite(FlxG.width / 2 - 256, FlxG.height / 2 - 256);
+		quad.loadGraphic(SkinLoader.getSkinnedImage('gameplay/notes.png'), true, 256, 256);
+		quad.animation.frameIndex = 0;
+		quad.x += positions[0][0];
+		quad.y += positions[0][1];
+		quad.scale.set(0.75, 0.75);
+		quad.alpha = 0;
+		FlxTween.tween(quad, {alpha: 1}, (crochet/1000) * 8);
+		quads.push(quad);
+		add(quad);
+		resizeSprites();
+	}
 
-		new FlxTimer().start(0.5, function(tmr)
-		{
-			for (i in 0...4)
-			{
-				new FlxTimer().start(1 + i / 2, function(tmr)
-				{
-					var quad = new FlxSprite(FlxG.width / 2 - 256, FlxG.height / 2 - 256);
-					quad.loadGraphic(SkinLoader.getSkinnedImage('gameplay/notes.png'), true, 256, 256);
-					quad.animation.frameIndex = 0;
-					quad.x += positions[i][0];
-					quad.y += positions[i][1];
-					quad.scale.set(0.75, 0.75);
-					quad.alpha = 0;
-					FlxTween.tween(quad, {alpha: 1,}, 1);
-					quads.push(quad);
-					add(quad);
-				});
-			}
-		});
-
-		new FlxTimer().start(4.5, function(tmr)
-		{
-			FlxG.camera.fade(0xFFFFFFFF, 0.25);
-			new FlxTimer().start(0.75, function(tmr)
+	override public function beatHit(){
+		if (curBeat < 32 && curBeat % 8 == 0){
+			trace(curBeat);
+				var quad = new FlxSprite(FlxG.width / 2 - 256, FlxG.height / 2 - 256);
+				quad.loadGraphic(SkinLoader.getSkinnedImage('gameplay/notes.png'), true, 256, 256);
+				quad.animation.frameIndex = 0;
+				quad.x += positions[(Std.int(curBeat/8))][0];
+				quad.y += positions[(Std.int(curBeat/8))][1];
+				quad.scale.set(0.75, 0.75);
+				quad.alpha = 0;
+				FlxTween.tween(quad, {alpha: 1}, (crochet/1000) * 8);
+				quads.push(quad);
+				add(quad);
+		}
+		if (curBeat == 32){
+			FlxG.camera.fade(0xFFFFFFFF, (crochet/1000) * 8);
+			new FlxTimer().start((crochet/1000) * 8, function(tmr)
 			{
 				FlxG.switchState(new MenuState());
 			});
-		});
-
+		}
+		if (curBeat == 8){
+			FlxTween.tween(skipText, {alpha: 0}, (crochet/1000)*8);
+		}
 		resizeSprites();
 	}
 
 	override public function update(elapsed:Float)
 	{
 		super.update(elapsed);
-		// if (FlxG.keys.justPressed.F7)
-		// 	FlxG.switchState(new DebugStrumsState());
+		if (FlxG.keys.justPressed.F7)
+			FlxG.switchState(new DebugStrumsState());
+		if (FlxG.keys.justPressed.ENTER) //Skip the entro if it's too long
+		 	FlxG.switchState(new MenuState());
 	}
 }

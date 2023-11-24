@@ -1,5 +1,6 @@
 package states;
 
+import states.songselect.SongSelectState;
 import skin.SkinLoader;
 import flixel.util.FlxStringUtil;
 import maps.OsuParser;
@@ -38,9 +39,8 @@ enum SongType
 	ProjectDiva; // unsure
 }
 
-class SongState extends FlxState
+class SongState extends BPMState
 {
-
 	public static var STRUM_X = 640 - 256;
 	public static var STRUM_Y = 16;
 	public static var STRUM_SIZE = 16;
@@ -65,36 +65,28 @@ class SongState extends FlxState
 	var allNotes:Array<Note>;
 	var notes:FlxTypedGroup<Note>;
 
+	var songEnded:Bool = false;
+
 	var dead:Bool = false;
 
 	var stats:FlxText;
 	var positionBar:FlxBar;
 	var healthBar:FlxBar;
 	var healthText:FlxText;
+	var autoplayText:FlxText;
+	var autoplay:Bool = false;
 
 	var rank:FlxSprite;
 	var rankNum:Int = 0;
 
 	var downscroll:Bool;
 
-	var songPos:Float = 0.0;
 	var clampSongPos:Float = 1.0;
 	var scrollSpeed:Float = 0.0;
 	var paused:Bool = false;
-
-	// FNF is a good example
-	var bpm:Float = 0.0;
-	var crochet:Float = 0.0;
-	var stepCrochet:Float = 0.0;
 	var voices:FlxSound;
 
 	var music:openfl.media.Sound;
-
-	public static var curBeat:Int;
-	public static var curStep:Int;
-
-	var beats:Float;
-	var steps:Float;
 
 	var startedSong:Bool = false;
 
@@ -188,6 +180,11 @@ class SongState extends FlxState
 		healthText = new FlxText(STRUM_X + 512 + 12, FlxG.height, STRUM_X - 15);
 		healthText.setFormat(Fonts.NotoSans.Light, 28);
 		healthText.antialiasing = true;
+
+		autoplayText = new FlxText(20, rank.height + 10, FlxG.width, 'Autoplay', 28);
+		autoplayText.alignment = LEFT;
+		autoplayText.antialiasing = true;
+		autoplayText.font = Fonts.NotoSans.Light;
 		updateHealthText();
 
 		if (Globals.debugMode)
@@ -197,6 +194,8 @@ class SongState extends FlxState
 		add(healthBar);
 		add(healthText);
 		add(rank);
+		if (autoplay)
+			add(autoplayText);
 
 		downscroll = Preferences.downscroll;
 		if (downscroll)
@@ -220,8 +219,7 @@ class SongState extends FlxState
 		allNotes = chart.notes;
 
 		bpm = chart.bpm[0];
-		crochet = (60 / bpm) * 1000;
-		stepCrochet = crochet / 4;
+		updateCrochet();
 
 		trace("All Notes: " + allNotes.length);
 
@@ -254,10 +252,10 @@ class SongState extends FlxState
 		});
 	}
 
-	// Finally added beats and steps
-	private function beatHit()
+	override function beatHit()
 	{
-		if (curBeat % 4 == 0)
+		super.beatHit();
+		if (curBeat % 4 == 0 && startedSong)
 		{
 			if (songType == SongType.FridayNightFunkin)
 				resyncVocals();
@@ -265,11 +263,9 @@ class SongState extends FlxState
 		}
 	}
 
-	// I thought it would be harder
-	private function stepHit()
+	override function stepHit()
 	{
-		if (curStep % 4 == 0)
-			beatHit();
+		super.stepHit();
 	}
 
 	private function updateHealthText()
@@ -309,8 +305,7 @@ class SongState extends FlxState
 				sustainEnd.sustainParent = note;
 				notes.add(sustainNote);
 				notes.add(sustainEnd);
-			}		
-
+			}
 		}
 		trace("Active notes: " + notes.length);
 		add(notes);
@@ -318,6 +313,8 @@ class SongState extends FlxState
 
 	private function startCountdown()
 	{
+		if (FlxG.sound.music != null)
+			FlxG.sound.music.fadeOut((crochet / 1000) * 3, 0);
 		new FlxTimer().start(crochet / 1000, function(tmr:FlxTimer)
 		{
 			if (tmr.loopsLeft > 0)
@@ -373,7 +370,6 @@ class SongState extends FlxState
 			voices.play(true, 0.0);
 
 			FlxG.sound.music.onComplete = endSong;
-
 		}
 		else if (songType == SongType.OsuMania)
 		{
@@ -382,7 +378,6 @@ class SongState extends FlxState
 		}
 		startedSong = true;
 		trace('Started Song');
-		
 	}
 
 	private function createParticle(x:Float, y:Float)
@@ -398,7 +393,6 @@ class SongState extends FlxState
 		var diff = Math.abs(note.strumTime - songPos);
 		if (!note.isSustain)
 		{
-
 			if (QMath.isBetween(diff, Conductor.hitFrame * 0.75, Conductor.hitFrame, true))
 			{
 				score = 100;
@@ -421,7 +415,6 @@ class SongState extends FlxState
 				trace('Got a weird diff of: $diff, to make the game fair, gonna count that as a 350 press but with no score');
 			}
 			popUpRating(score);
-
 		}
 		else
 		{
@@ -478,7 +471,6 @@ class SongState extends FlxState
 
 	private function lose()
 	{
-		
 		dead = true;
 		healthBar.percent = 0;
 		remove(healthText);
@@ -556,6 +548,7 @@ class SongState extends FlxState
 	}
 
 	var prevRank = 0;
+
 	private function updateScore()
 	{
 		accuracy = hitRating != 0 || totalNotes != 0 ? FlxMath.roundDecimal((hitRating / totalNotes) * 100, 2) : 0;
@@ -571,7 +564,7 @@ class SongState extends FlxState
 			rankNum = 4;
 		else if (accuracy >= 100)
 			rankNum = 5;
-		
+
 		if (accuracy <= 0)
 			accuracy = 0;
 
@@ -616,8 +609,8 @@ class SongState extends FlxState
 
 		if (!note.isSustain && note.strumTime < songPos && !note.canBeHit)
 			missNote(note);
-		if (note.isSustain && (note.strumTime + note.sustainParent.sustainLength) < songPos && !note.canBeHit)
-			missNote(note);
+		// if (note.isSustain && (note.strumTime + note.sustainParent.sustainLength) < songPos && !note.canBeHit)
+		// 	missNote(note);
 
 		if (note.strumTime < songPos && note.canBeHit)
 			note.late = true;
@@ -650,22 +643,28 @@ class SongState extends FlxState
 
 	private function endSong()
 	{
-		Scores.saveSong(songName, songDiff, {
-			accuracy: accuracy,
-			misses: misses,
-			score: score,
-			hits: totalHit,
-			maxCombo: maxCombo
-		});
-		Scores.saveScores();
+		if (!autoplay){
+			Scores.saveSong(songName, songDiff, {
+				accuracy: accuracy,
+				misses: misses,
+				score: score,
+				hits: totalHit,
+				maxCombo: maxCombo
+			});
+			Scores.saveScores();
+		}
+		songEnded = true;
 		new FlxTimer().start(1, function(tmr)
 		{
+			FlxG.sound.music.stop(); // makes a "crash" but the game is fine. huh. whatever, it works.
+			FlxG.sound.music = null;
 			FlxG.switchState(new MenuState());
 		});
 	}
 
 	private function inputHandle()
 	{
+		if (!autoplay){
 		var directions = ['left', 'down', 'up', 'right'];
 		for (i in 0...4)
 		{
@@ -687,6 +686,7 @@ class SongState extends FlxState
 			strums.members[2].playAnim('pressed');
 		if (Controls.pressed('right'))
 			strums.members[3].playAnim('pressed');
+		}
 
 		if (startedSong)
 			if (Controls.justPressed('pause'))
@@ -698,6 +698,7 @@ class SongState extends FlxState
 				openSubState(pss);
 			}
 
+			if (!autoplay){
 		if (Controls.justReleased('left'))
 			strums.members[0].playAnim('idle');
 		if (Controls.justReleased('down'))
@@ -707,13 +708,36 @@ class SongState extends FlxState
 		if (Controls.justReleased('right'))
 			strums.members[3].playAnim('idle');
 	}
+	}
 
 	override function update(elapsed:Float)
 	{
 		super.update(elapsed);
 
-		var prevHealth = health;
-		var prevStep = curStep;
+		// var prevHealth = health;
+		if (autoplay)
+		{
+			if (startedSong)
+			{
+				for (note in notes)
+				{
+					if (note.canBeHit)
+					{
+						if (note.isSustain)
+						{
+							if (note.canBeHit)
+							{
+								hitNote(note);
+							}
+						}
+						else if (note.strumTime <= songPos || note.isSustain)
+						{
+							hitNote(note);
+						}
+					}
+				}
+			}
+		}
 		inputHandle();
 
 		if (startedSong)
@@ -731,22 +755,15 @@ class SongState extends FlxState
 				checkForHit(note);
 			};
 
-			steps = songPos / stepCrochet;
-			beats = songPos / crochet;
-
-			curStep = Math.floor(steps);
-			curBeat = Math.floor(beats);
-
 			FlxG.camera.zoom = FlxMath.lerp(1, FlxG.camera.zoom, FlxMath.bound(1 - (elapsed * 3.125), 0, 1));
 			// health = FlxMath.lerp(health, prevHealth, 0.5 * elapsed);
 
-			// So simple, yet so effective
-			if (prevStep != curStep)
-				if (curStep > 0)
-					stepHit();
-
 			if (Globals.debugMode)
 				debugText.text = 'Steps: $steps\nBeats: $beats';
+		}
+		if (songEnded)
+		{
+			positionBar.value = 1;
 		}
 	}
 
@@ -770,7 +787,6 @@ class SongState extends FlxState
 
 class PauseSubState extends FlxSubState
 {
-
 	var songData:Array<Dynamic>;
 
 	public function new(x:Float, y:Float, songData:Array<Dynamic>)
@@ -779,7 +795,6 @@ class PauseSubState extends FlxSubState
 		this.songData = songData;
 
 		QMDiscordRpc.changeStatus('Paused ${songData[0]} (${songData[1]})', 'Misses: ${songData[2]}, Acc: ${songData[3]}%');
-
 	}
 
 	override function update(elapsed:Float)
@@ -788,7 +803,11 @@ class PauseSubState extends FlxSubState
 		if (Controls.justPressed('pause'))
 			closeMenu();
 		if (FlxG.keys.justPressed.BACKSPACE)
+		{
+			FlxG.sound.music.stop();
+			FlxG.sound.music = null;
 			closeSong();
+		}
 	}
 
 	private function closeMenu()
@@ -812,7 +831,7 @@ class PauseSubState extends FlxSubState
 	{
 		new FlxTimer().start(0.5, function(tmr)
 		{
-			FlxG.switchState(new MenuState());
+			FlxG.switchState(new SongSelectState());
 		});
 	}
 }
@@ -835,7 +854,11 @@ class LostSubState extends FlxSubState
 		if (FlxG.keys.justPressed.ENTER)
 			restartSong();
 		if (FlxG.keys.justPressed.ESCAPE)
+		{
+			FlxG.sound.music.stop();
+			FlxG.sound.music = null;
 			closeSong();
+		}
 	}
 
 	private function restartSong()
@@ -850,7 +873,7 @@ class LostSubState extends FlxSubState
 	{
 		new FlxTimer().start(0.5, function(tmr)
 		{
-			FlxG.switchState(new MenuState());
+			FlxG.switchState(new SongSelectState());
 		});
 	}
 }

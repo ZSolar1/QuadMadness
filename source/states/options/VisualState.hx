@@ -35,7 +35,10 @@ class VisualState extends FlxState
 	override public function create()
 	{
 		super.create();
-
+		if (FlxG.sound.music == null){
+			FlxG.sound.playMusic('assets/music/menu.ogg', 1, true);
+			FlxG.sound.music.time = 13339;
+		}
 		optionLabels = new FlxTypedGroup<FlxText>();
 		optionVarLabels = new FlxTypedGroup<FlxText>();
 

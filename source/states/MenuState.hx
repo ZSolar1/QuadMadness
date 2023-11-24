@@ -1,5 +1,6 @@
 package states;
 
+import flixel.FlxCamera;
 import skin.SkinLoader;
 import flixel.FlxSprite;
 import states.songselect.SongSelectState;
@@ -20,8 +21,10 @@ class MenuState extends FlxState
 	var logo:ParallaxSprite;
 
 	var buttons:FlxTypedGroup<ParallaxSprite>;
+	var buttonCam:FlxCamera; //camera so the button icons follow the logo PNG. it isn't seperate and im too lazy to fix it.
 	var buttontypes:Array<String> = [];
 	var menuMode:String = 'main';
+	var canPress:Bool = true;
 
 	override function onResize(Width:Int, Height:Int)
 	{
@@ -42,6 +45,15 @@ class MenuState extends FlxState
 	{
 		super.create();
 
+		if (FlxG.sound.music != null){
+			if (IntroState.cameFromIntro){
+			FlxG.sound.music.time = 13339;
+			IntroState.cameFromIntro = false;
+			}
+		}else{
+			FlxG.sound.playMusic('assets/music/menu.ogg', 1, true);
+			FlxG.sound.music.time = 13339;
+		}
 		QMDiscordRpc.changeStatus('In the menus', null);
 
 		background = new FlxSprite(0, 0);
@@ -51,6 +63,10 @@ class MenuState extends FlxState
 		background.antialiasing = true;
 		add(background);
 
+		buttonCam = new FlxCamera(0, 0, 1280, 720, 0);
+		FlxG.cameras.add(buttonCam);
+		
+
 		logo = new ParallaxSprite(FlxG.width / 2, FlxG.height / 2, 24);
 		logo.loadGraphic(SkinLoader.getSkinnedImage('logo.png'));
 		logo.centerPos();
@@ -59,14 +75,14 @@ class MenuState extends FlxState
 
 		buttons = new FlxTypedGroup<ParallaxSprite>();
 		add(buttons);
-		FlxG.camera.fade(0xFFFFFFFF, 0.5, true);
+		buttonCam.fade(0xFFFFFFFF, 0.5, true);
 		createButtons('main');
 		resizeSprites();
 	}
 
 	function exit()
 	{
-		FlxG.camera.fade(0xFF000000, 0.5);
+		buttonCam.fade(0xFF000000, 0.5);
 		new FlxTimer().start(0.75, function(tmr)
 		{
 			System.exit(0);
@@ -75,6 +91,7 @@ class MenuState extends FlxState
 
 	function createButtons(mode:String)
 	{
+		if (mode != 'none'){
 		buttons.forEach(function(btn)
 		{
 			FlxTween.cancelTweensOf(btn);
@@ -86,6 +103,19 @@ class MenuState extends FlxState
 				}
 			});
 		});
+	}else{
+		buttons.forEach(function(btn)
+			{
+				FlxTween.cancelTweensOf(btn);
+				FlxTween.tween(btn, {alpha: 0}, 0.5, {
+					ease: FlxEase.quadOut,
+					onComplete: function(twn)
+					{
+						buttons.remove(btn, true);
+					}
+				});
+			});
+	}
 
 		menuMode = mode;
 		var presetbuttons:Map<String, Array<String>> = [
@@ -117,7 +147,11 @@ class MenuState extends FlxState
 	function fade()
 	{
 		createButtons('none');
-		FlxTween.tween(logo, {"scale.x": 1.25, 'scale.y': 1.25, alpha: 0}, 0.5, {
+		canPress = false;
+		FlxTween.tween(buttonCam, {zoom: 1.25}, 0.5, {
+			ease: FlxEase.quadOut
+		});
+		FlxTween.tween(logo, {alpha: 0}, 0.5, {
 			ease: FlxEase.quadOut
 		});
 	}
@@ -136,7 +170,7 @@ class MenuState extends FlxState
 	{
 		super.update(elapsed);
 
-		if (FlxG.keys.justPressed.ESCAPE)
+		if (FlxG.keys.justPressed.ESCAPE && canPress)
 		{
 			switch (menuMode)
 			{
