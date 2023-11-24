@@ -9,7 +9,7 @@ QuadMadness is a rhythm game made in HaxeFlixel
 After getting inspired by FNF and it's engine, I decided to try making a rhythm game of my own. The visual art-style is heavily inspired by [osu!lazer](https://lazer.ppy.sh/), and tries to aim at it's fluidity and cleanliness. This game is supposed to be highly-moddable with compatibility with different games.
 
 ## Currently available features
-
+- Autoplaying songs (Won't save score)
 - Playing FNF songs
 - Playing osu!mania songs (unfinished, due to no mp3 support on desktop)
 - Chart Editor (WIP)
