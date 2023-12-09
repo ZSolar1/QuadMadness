@@ -1,5 +1,11 @@
 package states.options;
 
+import flixel.math.FlxMath;
+import flixel.tweens.FlxTween;
+import flixel.tweens.FlxEase;
+import flixel.FlxSprite;
+import skin.SkinLoader;
+import flixel.addons.display.FlxBackdrop;
 import flixel.util.FlxTimer;
 import Fonts.NotoSans;
 import flixel.FlxG;
@@ -21,6 +27,9 @@ class VisualState extends FlxState
 	var optionSelector:FlxText;
 	var selected:Int = 0;
 	var optionSize = 48;
+	var applyTxt:FlxText;
+	var appliedTxt:FlxText;
+	var pressedAmt:Int = 0;
 
 	var optionNames = ['Visual Offset', 'Scroll Speed', 'Downscroll', 'Windowed'];
 	var optionDescs = [
@@ -42,11 +51,16 @@ class VisualState extends FlxState
 		optionLabels = new FlxTypedGroup<FlxText>();
 		optionVarLabels = new FlxTypedGroup<FlxText>();
 
+		var checker = new FlxBackdrop(SkinLoader.getSkinnedImage('menu/checker.png'), XY);
+		checker.velocity.x = 20;
+		//checker.camera = bgCam;
+		add(checker);
 		background = new ParallaxSprite(0, 0, 64);
-		background.loadGraphic('assets/images/menu/background.png');
+		background.loadGraphic(SkinLoader.getSkinnedImage('menu/background.png'));
 		background.scale.x = 1.25;
 		background.scale.y = 1.25;
 		background.antialiasing = true;
+		//background.camera = bgCam;
 		add(background);
 
 		// buttonBack = new QButton(16, FlxG.height - 272, 1, 'back');
@@ -73,6 +87,14 @@ class VisualState extends FlxState
 		optionDesc.alignment = CENTER;
 		optionDesc.setFormat(NotoSans.Light, optionSize);
 
+		applyTxt = new FlxText(0, FlxG.height - 148, FlxG.width, 'Press ${Preferences.keyBinds.get('confirm')[0].toString()} or ${Preferences.keyBinds.get('confirm')[1].toString()} to apply');
+		applyTxt.alignment = CENTER;
+		applyTxt.setFormat(NotoSans.Light, optionSize);
+		appliedTxt = new FlxText(0, FlxG.height - 95, FlxG.width, 'Applied!');
+		appliedTxt.alignment = CENTER;
+		appliedTxt.alpha = 0;
+		appliedTxt.setFormat(NotoSans.Light, optionSize);
+
 		optionSelector = new FlxText(48, 32 + (selected * optionSize * 1.75), FlxG.width, '>');
 		optionSelector.alignment = LEFT;
 		optionSelector.setFormat(NotoSans.Light, optionSize);
@@ -94,7 +116,16 @@ class VisualState extends FlxState
 		add(optionLabels);
 		add(optionVarLabels);
 		add(optionDesc);
+		add(applyTxt);
+		add(appliedTxt);
 		add(optionSelector);
+		var darkness = new FlxSprite(0, 0);
+		darkness.makeGraphic(FlxG.width, FlxG.height, 0xFF000000);
+		darkness.alpha = 1;
+		add(darkness);
+		FlxG.camera.zoom = 1.25;
+		FlxTween.tween(darkness, {alpha: 0}, 0.5, {ease: FlxEase.quadOut});
+		FlxTween.tween(FlxG.camera, {zoom: 1}, 0.5, {ease: FlxEase.quadOut});
 	}
 
 	function changeSelection()
@@ -124,9 +155,9 @@ class VisualState extends FlxState
 	{
 		super.update(elapsed);
 		updateVars();
-		if (FlxG.keys.justPressed.BACKSPACE || FlxG.keys.justPressed.ESCAPE)
+		appliedTxt.alpha = FlxMath.lerp(appliedTxt.alpha, 0, 0.05);
+		if (Controls.justPressed('cancel'))
 		{
-			Preferences.savePrefs('visual');
 			FlxG.switchState(new MenuState());
 		}
 		// if (Interactions.Clicked(buttonBack.icon))
@@ -151,7 +182,7 @@ class VisualState extends FlxState
 		// 	Preferences.savePrefs('visual');
 		// 	Preferences.applyPrefs('visual');
 		// }
-		if (FlxG.keys.justPressed.DOWN)
+		if (Controls.justPressed('down'))
 		{
 			if (selected < 3)
 				selected++;
@@ -159,7 +190,7 @@ class VisualState extends FlxState
 				selected = 0;
 			changeSelection();
 		}
-		if (FlxG.keys.justPressed.UP)
+		if (Controls.justPressed('up'))
 		{
 			if (selected > 0)
 				selected--;
@@ -168,19 +199,40 @@ class VisualState extends FlxState
 			changeSelection();
 		}
 
-		if (FlxG.keys.justPressed.LEFT || FlxG.keys.justPressed.RIGHT)
+		if (Controls.pressed('left') || Controls.pressed('right'))
+			{
+				pressedAmt++;
+				if (pressedAmt > 120){
+				switch (optionVars[selected])
+				{
+					case 'visualOffset':
+						Preferences.visualOffset += if (Controls.pressed('left')) -1 else 1;
+				}
+			}
+			}else{
+				pressedAmt = 0;
+			}
+
+		if (Controls.justPressed('left') || Controls.justPressed('right'))
 		{
 			switch (optionVars[selected])
 			{
 				case 'visualOffset':
-					Preferences.visualOffset += if (FlxG.keys.justPressed.LEFT) -1 else 1;
+					Preferences.visualOffset += if (Controls.justPressed('left')) -1 else 1;
 				case 'scrollSpeed':
-					Preferences.scrollSpeed += if (FlxG.keys.justPressed.LEFT) -0.1 else 0.1;
+					Preferences.scrollSpeed += if (Controls.justPressed('left')) -0.1 else 0.1;
 				case 'downscroll':
 					Preferences.downscroll = !Preferences.downscroll;
 				case 'windowed':
 					Preferences.windowed = !Preferences.windowed;
 			}
 		}
+
+		if (Controls.justPressed('confirm'))
+			{
+				appliedTxt.alpha = 1;
+				Preferences.savePrefs('visual');
+				Preferences.applyPrefs('visual');
+			}
 	}
 }

@@ -20,6 +20,8 @@ class Preferences
 		'up' => [J, UP],
 		'right' => [K, RIGHT],
 		'pause' => [ESCAPE, ENTER],
+		'confirm' => [ENTER, SPACE],
+		'cancel' => [ESCAPE, BACKSPACE],
 	];
 
 	public static function savePrefs(type:String)
@@ -87,8 +89,8 @@ class Preferences
 		if (FlxG.save.data.hitsoundVolume != null)
 			hitsoundVolume = FlxG.save.data.hitsoundVolume;
 
-		if (FlxG.save.data.keybinds != null)
-			keyBinds = FlxG.save.data.keybinds;
+		// if (FlxG.save.data.keybinds != null)
+		// 	keyBinds = FlxG.save.data.keybinds;
 
 		FlxG.save.flush();
 	}

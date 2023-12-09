@@ -163,11 +163,11 @@ class SongSelectState extends FlxState
 		var prevSongBoxY = songBoxes.y;
 		if (selectingSong)
 		{
-			if (FlxG.keys.justPressed.DOWN)
+			if (Controls.justPressed('down'))
 				changeSelection(1);
-			else if (FlxG.keys.justPressed.UP)
+			else if (Controls.justPressed('up'))
 				changeSelection(-1);
-			if (FlxG.keys.justPressed.ENTER)
+			if (Controls.justPressed('confirm'))
 			{
 				if (!selectingDiff)
 				{

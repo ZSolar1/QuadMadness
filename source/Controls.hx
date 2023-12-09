@@ -1,5 +1,6 @@
 package;
 
+import flixel.math.FlxMath;
 import flixel.FlxG;
 
 class Controls
@@ -18,6 +19,10 @@ class Controls
 				return FlxG.keys.anyPressed(Preferences.keyBinds.get('right'));
 			case 'pause':
 				return FlxG.keys.anyPressed(Preferences.keyBinds.get('pause'));
+				case 'confirm':
+				return FlxG.keys.anyPressed(Preferences.keyBinds.get('confirm'));
+				case 'cancel':
+				return FlxG.keys.anyPressed(Preferences.keyBinds.get('cancel'));
 			default:
 				return false;
 		}
@@ -37,6 +42,10 @@ class Controls
 				return FlxG.keys.anyJustPressed(Preferences.keyBinds.get('right'));
 			case 'pause':
 				return FlxG.keys.anyJustPressed(Preferences.keyBinds.get('pause'));
+				case 'confirm':
+				return FlxG.keys.anyJustPressed(Preferences.keyBinds.get('confirm'));
+				case 'cancel':
+				return FlxG.keys.anyJustPressed(Preferences.keyBinds.get('cancel'));
 			default:
 				return false;
 		}
@@ -56,6 +65,10 @@ class Controls
 				return FlxG.keys.anyJustReleased(Preferences.keyBinds.get('right'));
 			case 'pause':
 				return FlxG.keys.anyJustReleased(Preferences.keyBinds.get('pause'));
+				case 'confirm':
+				return FlxG.keys.anyJustReleased(Preferences.keyBinds.get('confirm'));
+				case 'cancel':
+				return FlxG.keys.anyJustReleased(Preferences.keyBinds.get('cancel'));
 			default:
 				return false;
 		}

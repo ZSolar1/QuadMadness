@@ -19,6 +19,15 @@ class SMath
 		return value < 0;
 	}
 
+	public static function average(values:Array<Float>):Float
+	{
+		var length:Int = values.length;
+		var total:Float = 0;
+		for (v in values)
+			total += v;
+		return total / length;
+	}
+
 	public static function easeFromString(ease:String)
 	{
 		var reflected = Reflect.field(FlxEase, ease.trim());
